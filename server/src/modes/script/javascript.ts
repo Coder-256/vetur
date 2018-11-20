@@ -108,14 +108,10 @@ export function getJavascriptMode(
       if (NON_SCRIPT_TRIGGERS.includes(triggerChar)) {
         return { isIncomplete: false, items: [] };
       }
-      const completions = service.getCompletionsAtPosition(
-        fileFsPath,
-        offset,
-        {
-          includeExternalModuleExports: _.get(config, ['vetur', 'completion', 'autoImport']),
-          includeInsertTextCompletions: false
-        }
-      );
+      const completions = service.getCompletionsAtPosition(fileFsPath, offset, {
+        includeExternalModuleExports: _.get(config, ['vetur', 'completion', 'autoImport']),
+        includeInsertTextCompletions: false
+      });
       if (!completions) {
         return { isIncomplete: false, items: [] };
       }
@@ -154,7 +150,8 @@ export function getJavascriptMode(
         item.data.offset,
         item.label,
         /*formattingOption*/ {},
-        item.data.source
+        item.data.source,
+        undefined
       );
       if (details) {
         item.detail = ts.displayPartsToString(details.displayParts);
@@ -196,7 +193,7 @@ export function getJavascriptMode(
       }
 
       const fileFsPath = getFileFsPath(doc.uri);
-      const signHelp = service.getSignatureHelpItems(fileFsPath, scriptDoc.offsetAt(position));
+      const signHelp = service.getSignatureHelpItems(fileFsPath, scriptDoc.offsetAt(position), undefined);
       if (!signHelp) {
         return NULL_SIGNATURE;
       }
@@ -242,9 +239,7 @@ export function getJavascriptMode(
         return occurrences.map(entry => {
           return {
             range: convertRange(scriptDoc, entry.textSpan),
-            kind: entry.isWriteAccess
-              ? DocumentHighlightKind.Write
-              : DocumentHighlightKind.Text
+            kind: entry.isWriteAccess ? DocumentHighlightKind.Write : DocumentHighlightKind.Text
           };
         });
       }
@@ -503,29 +498,31 @@ function convertOptions(
 function convertCodeAction(
   doc: TextDocument,
   codeActions: ts.CodeAction[],
-  regionStart: LanguageModelCache<LanguageRange | undefined>) {
+  regionStart: LanguageModelCache<LanguageRange | undefined>
+) {
   const textEdits: TextEdit[] = [];
   for (const action of codeActions) {
     for (const change of action.changes) {
-      textEdits.push(...change.textChanges.map(tc => {
-        // currently, only import codeAction is available
-        // change start of doc to start of script region
-        if (tc.span.start === 0 && tc.span.length === 0) {
-          const region = regionStart.get(doc);
-          if (region) {
-            const line = region.start.line;
-            return {
-              range: Range.create(line + 1, 0, line + 1, 0),
-              newText: tc.newText
-            };
+      textEdits.push(
+        ...change.textChanges.map(tc => {
+          // currently, only import codeAction is available
+          // change start of doc to start of script region
+          if (tc.span.start === 0 && tc.span.length === 0) {
+            const region = regionStart.get(doc);
+            if (region) {
+              const line = region.start.line;
+              return {
+                range: Range.create(line + 1, 0, line + 1, 0),
+                newText: tc.newText
+              };
+            }
           }
-        }
-        return {
-          range: convertRange(doc, tc.span),
-          newText: tc.newText
-        };
-      }
-      ));
+          return {
+            range: convertRange(doc, tc.span),
+            newText: tc.newText
+          };
+        })
+      );
     }
   }
   return textEdits;
