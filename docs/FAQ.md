@@ -22,6 +22,7 @@ This is probably caused by VS Code not installing Vetur properly. Try these meth
 - If it says `cannot find module <some-module>`, go to Vetur's client code installation directory and run `yarn` or `npm install`.
   This is usually caused by VS Code not correctly updating Vetur's dependencies from version to version.
   Paths:
+
   - Win: `%USERPROFILE%\.vscode\extensions\octref.vetur-<version>\client`
   - Mac: `~/.vscode/extensions/octref.vetur-<version>/client`
   - Linux: `~/.vscode/extensions/octref.vetur-<version>/client`
@@ -43,7 +44,7 @@ This is probably caused by VS Code not installing Vetur properly. Try these meth
         '@': 'src'
       }
     }
-  }
+  };
   ```
 
   ```json
@@ -52,9 +53,7 @@ This is probably caused by VS Code not installing Vetur properly. Try these meth
     "compilerOptions": {
       "baseUrl": ".",
       "paths": {
-        "@/*": [
-          "src/*"
-        ]
+        "@/*": ["src/*"]
       }
     }
   }
@@ -87,10 +86,10 @@ Then, clone the repository and compile it.
 ```
 git clone https://github.com/vuejs/vetur
 cd vetur
-yarn 
-cd server && yarn && yarn compile 
-cd ../ && yarn compile 
+yarn
+cd server && yarn && yarn compile
+cd ../ && yarn compile
 vsce package
 ```
-  
+
 Now you'll find `vetur-{version}.vsix`, you can install it by editor command "Install from VSIX".

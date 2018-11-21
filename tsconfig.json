@@ -7,8 +7,5 @@
     "noUnusedLocals": true,
     "sourceMap": true
   },
-  "exclude": [
-    "node_modules",
-    "server"
-  ]
+  "exclude": ["node_modules", "server"]
 }

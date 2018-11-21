@@ -309,7 +309,7 @@ export function createScanner(
         if (stream.advanceIfChars([_RCR, _RCR])) {
           state = ScannerState.WithinContent;
           return finishToken(offset, TokenType.EndInterpolation);
-         }
+        }
         stream.advanceUntilChars([_RCR, _RCR]);
         return finishToken(offset, TokenType.InterpolationContent);
       case ScannerState.AfterOpeningEndTag:

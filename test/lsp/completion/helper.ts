@@ -12,8 +12,10 @@ export async function testCompletion(docUri: vscode.Uri, position: vscode.Positi
   )) as vscode.CompletionList;
 
   expectedItems.forEach(ei => {
-    assert.ok(result.items.some(i => {
-      return i.label === ei;
-    }));
+    assert.ok(
+      result.items.some(i => {
+        return i.label === ei;
+      })
+    );
   });
 }

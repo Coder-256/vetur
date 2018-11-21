@@ -94,12 +94,11 @@
 - Upgrade grammar so broken syntax in each region will not affect syntax highlighting outside that specific region. #174.
 - Always ignore `end_with_newline` option in js-beautify so the template formats properly. #544.
 
-
-### 0.11.3 | 2017-11-13 
+### 0.11.3 | 2017-11-13
 
 - Hot fix for a bug in formatting `<template>` with js-beautify where it adds `</template>` to the end. #539.
 
-### 0.11.2 | 2017-11-13 
+### 0.11.2 | 2017-11-13
 
 - Workaround a js-beautify bug which indents multi-line comment. #535.
 - Docs for generating grammar for custom blocks: https://vuejs.github.io/vetur/highlighting.html.
@@ -107,7 +106,7 @@
 - Disallow longer version of `lang` in custom block setting (`js` over `javascript`, `md` over `markdown`).
 - Pretty print generated gramamr so it's readable. (You can find it at ~/.vscode/extensions/octref.vetur-<version>./syntaxes/vue-generated.json).
 
-### 0.11.1 | 2017-11-10 
+### 0.11.1 | 2017-11-10
 
 - Syntax highlighting for Custom Block. #210.
   - Added setting `vetur.grammar.customBlocks`.
@@ -366,6 +365,7 @@ Shoutout to @HerringtonDarkholme who helped implementing many new features!
 - Improve `sass` syntax highlighting based on grammar from [robinbentley/vscode-sass-indented](https://github.com/robinbentley/vscode-sass-indented). #41.
 
 Thanks to [@sandersn](https://github.com/sandersn)'s [PR](https://github.com/octref/vetur/pull/94):
+
 - Preliminary TypeScript support (try `<script lang="ts">`)
 - Improved IntelliSense for `js/ts` in Vue SFC.
 - Correct Module Resolution (try `npm i lodash @types/lodash` and use lodash in your Vue SFC).

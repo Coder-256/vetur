@@ -32,10 +32,7 @@ export function generateGrammarCommandHandler(extensionPath: string) {
 
   return () => {
     try {
-      const generatedGrammar = getGeneratedGrammar(
-        path.resolve(extensionPath, 'syntaxes/vue.json'),
-        customBlocks
-      );
+      const generatedGrammar = getGeneratedGrammar(path.resolve(extensionPath, 'syntaxes/vue.json'), customBlocks);
       fs.writeFileSync(path.resolve(extensionPath, 'syntaxes/vue-generated.json'), generatedGrammar, 'utf-8');
       vscode.window.showInformationMessage('Successfully generated vue grammar. Reload VS Code to enable it.');
     } catch (e) {

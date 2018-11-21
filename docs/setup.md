@@ -25,28 +25,24 @@
 - `jsconfig.json`
 
   ```json
-    {
-      "include": [
-        "./src/**/*"
-      ]
-    }
+  {
+    "include": ["./src/**/*"]
+  }
   ```
 
 - `tsconfig.json`
 
   ```json
-    {
-      "include": [
-        "./src/**/*"
-      ],
-      "compilerOptions": {
-        "module": "es2015",
-        "moduleResolution": "node",
-        "target": "es5",
-        "sourceMap": true,
-        "allowJs": true
-      }
+  {
+    "include": ["./src/**/*"],
+    "compilerOptions": {
+      "module": "es2015",
+      "moduleResolution": "node",
+      "target": "es5",
+      "sourceMap": true,
+      "allowJs": true
     }
+  }
   ```
 
 #### jsconfig vs tsconfig
@@ -62,34 +58,25 @@ If you are using [Webpack's alias](https://webpack.js.org/configuration/resolve/
 For example:
 
 ```html
-└── src
-    ├── components
-    │   ├── a.vue
-    │   └── b.vue
-    ├── containers
-    │   └── index.vue
-    ├── index.js
-    └── jsconfig.json
+└── src ├── components │ ├── a.vue │ └── b.vue ├── containers │ └── index.vue ├── index.js └── jsconfig.json
 ```
 
 jsconfig.json:
 
 ```json
 {
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "components/*": [
-                "src/components/*"
-            ]
-        }
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "components/*": ["src/components/*"]
     }
+  }
 }
 ```
 
 index.vue
 
 ```javascript
-import a from 'components/a.vue'
-import b from 'components/b.vue'
+import a from 'components/a.vue';
+import b from 'components/b.vue';
 ```

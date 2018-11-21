@@ -20,7 +20,7 @@ When you have `element-ui` or `vue-onsenui` as a dependency in your Vue project,
 
 If your Vue UI framework has a lot of users, we might consider adding support for it in Vetur.
 
-Here are the two PRs for [Element](https://github.com/vuejs/vetur/pull/234) and [Onsen](https://github.com/vuejs/vetur/pull/308). 
+Here are the two PRs for [Element](https://github.com/vuejs/vetur/pull/234) and [Onsen](https://github.com/vuejs/vetur/pull/308).
 
 Open an issue for discussion first before sending PR.
 

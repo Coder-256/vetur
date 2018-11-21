@@ -65,7 +65,9 @@ describe('Should do documentSymbol', () => {
 type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
     ? RecursivePartial<U>[]
-    : T[P] extends object ? RecursivePartial<T[P]> : T[P]
+    : T[P] extends object
+    ? RecursivePartial<T[P]>
+    : T[P]
 };
 
 // From: @Coder-256
@@ -103,7 +105,6 @@ function assertDeepEqual<T>(actual: T, expected: RecursivePartial<T>) {
 }
 
 async function testSymbol(docUri: vscode.Uri, expectedSymbols: RecursivePartial<vscode.DocumentSymbol>[]) {
-
   await showFile(docUri);
   await sleep(2000);
 

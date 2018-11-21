@@ -49,7 +49,7 @@ export function getTagProviderSettings(workspacePath: string | null | undefined)
   }
   try {
     const packagePath = ts.findConfigFile(workspacePath, ts.sys.fileExists, 'package.json');
-    if(!packagePath) {
+    if (!packagePath) {
       return settings;
     }
     const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));

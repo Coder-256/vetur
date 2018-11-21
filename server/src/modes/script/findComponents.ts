@@ -131,7 +131,7 @@ function getPropTypeDeclaration(prop: ts.Symbol, checker: ts.TypeChecker) {
 }
 
 function isStringLiteral(e: ts.Expression): e is ts.StringLiteral {
-    return e.kind === ts.SyntaxKind.StringLiteral;
+  return e.kind === ts.SyntaxKind.StringLiteral;
 }
 
 function getArrayProps(compType: ts.Type, checker: ts.TypeChecker) {
@@ -144,9 +144,7 @@ function getArrayProps(compType: ts.Type, checker: ts.TypeChecker) {
     return undefined;
   }
   const propArray = propDef as ts.ArrayLiteralExpression;
-  return propArray.elements
-    .filter(isStringLiteral)
-    .map(e => ({ name: hyphenate(e.text) }));
+  return propArray.elements.filter(isStringLiteral).map(e => ({ name: hyphenate(e.text) }));
 }
 
 function getPropertyTypeOfType(tpe: ts.Type, property: string, checker: ts.TypeChecker) {

@@ -22,7 +22,7 @@ function isTSLike(scriptKind: ts.ScriptKind | undefined) {
 export function createUpdater() {
   const clssf = ts.createLanguageServiceSourceFile;
   const ulssf = ts.updateLanguageServiceSourceFile;
-  const scriptKindTracker = new WeakMap<ts.SourceFile, ts.ScriptKind|undefined>();
+  const scriptKindTracker = new WeakMap<ts.SourceFile, ts.ScriptKind | undefined>();
 
   return {
     createLanguageServiceSourceFile(

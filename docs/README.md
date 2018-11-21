@@ -6,10 +6,9 @@
 
 Vue tooling for VS Code, powered by [vue-language-server](https://github.com/vuejs/vetur/tree/master/server).
 
-Try it out with [Veturpack](https://github.com/octref/veturpack)!  
+Try it out with [Veturpack](https://github.com/octref/veturpack)!
 
 🎉 VueConf 2017 [Slide](https://www.dropbox.com/sh/eb4w8k3orh0j391/AAB3HaJexbGLa2tCP14BI8oJa?dl=0) & [Video](https://www.youtube.com/watch?v=05tNXJ-Kric) 🎉
-
 
 This extension is under heavy development.
 You can [open an issue](https://github.com/vuejs/vetur/issues/new) for bugs or feature requests.
@@ -38,4 +37,4 @@ You can [open an issue](https://github.com/vuejs/vetur/issues/new) for bugs or f
 
 ## License
 
-MIT © [Pine Wu](https://github.com/octref) 
+MIT © [Pine Wu](https://github.com/octref)

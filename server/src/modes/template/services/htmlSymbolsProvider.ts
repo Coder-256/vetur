@@ -42,7 +42,7 @@ function provideFileSymbolsInternal(
 function nodeToName(node: Node): string {
   let name = node.tag;
 
-  if(!name) {
+  if (!name) {
     return '';
   }
 

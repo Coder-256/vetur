@@ -168,7 +168,9 @@ export function getServiceHost(workspacePath: string, jsDocuments: LanguageModel
         const extension =
           doc.languageId === 'typescript'
             ? ts.Extension.Ts
-            : doc.languageId === 'tsx' ? ts.Extension.Tsx : ts.Extension.Js;
+            : doc.languageId === 'tsx'
+            ? ts.Extension.Tsx
+            : ts.Extension.Js;
         return { resolvedFileName, extension };
       });
     },

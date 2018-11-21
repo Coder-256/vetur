@@ -12,16 +12,12 @@
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceRoot}"
-      ],
+      "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
       "internalConsoleOptions": "neverOpen",
       "sourceMaps": true,
       "outFiles": ["${workspaceRoot}/dist/**/*.js"],
       "smartStep": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "skipFiles": ["<node_internals>/**"]
     },
     {
       "name": "server",
@@ -33,9 +29,7 @@
       "protocol": "inspector",
       "restart": true,
       "smartStep": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "skipFiles": ["<node_internals>/**"]
     },
     {
       "name": "E2E Test",
@@ -51,9 +45,7 @@
       "sourceMaps": true,
       "outFiles": ["${workspaceRoot}/dist/test/**/*.js"],
       "smartStep": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

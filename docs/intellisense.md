@@ -10,7 +10,7 @@ IntelliSense for Element UI and Onsen UI components are also available. See [Fra
 
 ## `<style>`
 
-Vetur offers IntelliSense for CSS properties & values in `css/scss/less/postcss/stylus`.  
+Vetur offers IntelliSense for CSS properties & values in `css/scss/less/postcss/stylus`.
 
 ## `<script>`
 

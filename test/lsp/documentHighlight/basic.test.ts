@@ -32,7 +32,6 @@ describe('Should do documentHighlight', () => {
       { kind: vscode.DocumentHighlightKind.Write, range: sameLineRange(20, 16, 20) }
     ]);
   });
-
 });
 
 async function testHighlight(

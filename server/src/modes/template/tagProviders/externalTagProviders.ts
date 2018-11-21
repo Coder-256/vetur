@@ -32,10 +32,10 @@ export function getQuasarTagProvider(workspacePath: string, pkg: any): IHTMLTagP
 
   return tagsPath && attrsPath
     ? getExternalTagProvider(
-      'quasar',
-      JSON.parse(fs.readFileSync(tagsPath, 'utf-8')),
-      JSON.parse(fs.readFileSync(attrsPath, 'utf-8'))
-    )
+        'quasar',
+        JSON.parse(fs.readFileSync(tagsPath, 'utf-8')),
+        JSON.parse(fs.readFileSync(attrsPath, 'utf-8'))
+      )
     : null;
 }
 

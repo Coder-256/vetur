@@ -26,7 +26,7 @@ After you installed [ESLint plugin](https://marketplace.visualstudio.com/items?i
     {
       "language": "vue",
       "autoFix": true
-    },
+    }
   ]
 }
 ```
@@ -47,10 +47,7 @@ To configure linting rules:
 
   ```json
   {
-    "extends": [
-      "eslint:recommended",
-      "plugin:vue/recommended"
-    ],
+    "extends": ["eslint:recommended", "plugin:vue/recommended"],
     "rules": {
       "vue/html-self-closing": "off"
     }

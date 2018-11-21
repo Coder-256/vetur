@@ -852,7 +852,7 @@ suite('HTML Scanner', () => {
         tokens: [
           { offset: 0, type: TokenType.StartInterpolation },
           { offset: 2, type: TokenType.InterpolationContent },
-          { offset: 15, type: TokenType.EndInterpolation },
+          { offset: 15, type: TokenType.EndInterpolation }
         ]
       },
       {
@@ -861,7 +861,7 @@ suite('HTML Scanner', () => {
           { offset: 0, type: TokenType.Content },
           { offset: 3, type: TokenType.StartInterpolation },
           { offset: 5, type: TokenType.InterpolationContent },
-          { offset: 18, type: TokenType.EndInterpolation },
+          { offset: 18, type: TokenType.EndInterpolation }
         ]
       },
       {
@@ -871,7 +871,7 @@ suite('HTML Scanner', () => {
           { offset: 3, type: TokenType.StartInterpolation },
           { offset: 5, type: TokenType.InterpolationContent },
           { offset: 18, type: TokenType.EndInterpolation },
-          { offset: 20, type: TokenType.Content },
+          { offset: 20, type: TokenType.Content }
         ]
       }
     ]);
@@ -887,7 +887,7 @@ suite('HTML Scanner', () => {
           { offset: 20, type: TokenType.EndInterpolation },
           { offset: 22, type: TokenType.EndTagOpen },
           { offset: 24, type: TokenType.EndTag, content: 'div' },
-          { offset: 27, type: TokenType.EndTagClose },
+          { offset: 27, type: TokenType.EndTagClose }
         ]
       },
       {
@@ -901,17 +901,14 @@ suite('HTML Scanner', () => {
           { offset: 20, type: TokenType.EndInterpolation },
           { offset: 22, type: TokenType.EndTagOpen },
           { offset: 24, type: TokenType.EndTag, content: 'div' },
-          { offset: 27, type: TokenType.EndTagClose },
+          { offset: 27, type: TokenType.EndTagClose }
         ]
       }
     ]);
     assertTokens([
       {
         input: '{{interpolation',
-        tokens: [
-          { offset: 0, type: TokenType.StartInterpolation },
-          { offset: 2, type: TokenType.InterpolationContent },
-        ]
+        tokens: [{ offset: 0, type: TokenType.StartInterpolation }, { offset: 2, type: TokenType.InterpolationContent }]
       }
     ]);
   });

@@ -20,16 +20,10 @@ describe('Should do documentLink', () => {
   });
 });
 
-async function testLink(
-  docUri: vscode.Uri,
-  expectedLinks: vscode.DocumentLink[]
-) {
+async function testLink(docUri: vscode.Uri, expectedLinks: vscode.DocumentLink[]) {
   await showFile(docUri);
 
-  const result = (await vscode.commands.executeCommand(
-    'vscode.executeLinkProvider',
-    docUri
-  )) as vscode.DocumentLink[];
+  const result = (await vscode.commands.executeCommand('vscode.executeLinkProvider', docUri)) as vscode.DocumentLink[];
 
   expectedLinks.forEach(el => {
     assert.ok(result.some(l => isEqualLink(l, el)));

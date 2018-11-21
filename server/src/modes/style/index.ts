@@ -67,12 +67,14 @@ function getStyleMode(
       const embedded = embeddedDocuments.get(document);
       const emmetSyntax = languageId === 'postcss' ? 'css' : languageId;
       const lsCompletions = languageService.doComplete(embedded, position, stylesheets.get(embedded));
-      const lsItems = lsCompletions ? _.map(lsCompletions.items, i => {
-        return {
-          ...i,
-          sortText: Priority.Platform + i.label
-        };
-      }) : [];
+      const lsItems = lsCompletions
+        ? _.map(lsCompletions.items, i => {
+            return {
+              ...i,
+              sortText: Priority.Platform + i.label
+            };
+          })
+        : [];
 
       const emmetCompletions = emmet.doComplete(document, position, emmetSyntax, config.emmet);
       if (!emmetCompletions) {
