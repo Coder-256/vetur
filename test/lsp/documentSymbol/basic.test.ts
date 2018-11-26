@@ -61,7 +61,6 @@ describe('Should do documentSymbol', () => {
   });
 });
 
-// From: https://stackoverflow.com/a/51365037
 type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
     ? RecursivePartial<U>[]
@@ -70,7 +69,6 @@ type RecursivePartial<T> = {
     : T[P]
 };
 
-// From: @Coder-256
 function assertDeepEqual<T>(actual: T, expected: RecursivePartial<T>) {
   if (expected instanceof Array) {
     if (actual instanceof Array) {

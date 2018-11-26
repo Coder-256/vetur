@@ -15,7 +15,7 @@
     "prepush": "npm run test:server",
     "lint": "tslint -p tslint.json",
     "test:server": "cd server && npm run compile && npm test",
-    "test:e2e": "./test/e2e.sh",
+    "test:e2e": "sh ./test/e2e.sh",
     "test": "run-s lint compile test:server test:e2e",
     "docs": "bash ./build/update-docs.sh",
     "postinstall": "node ./node_modules/vscode/bin/install"
@@ -310,7 +310,9 @@
             }
           },
           "default": {
-            "js-beautify-html": {},
+            "js-beautify-html": {
+              "wrap_attributes": "force-expand-multiline"
+            },
             "prettyhtml": {
               "printWidth": 100,
               "singleQuote": false,
