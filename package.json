@@ -11,19 +11,28 @@
     "watch": "run-p watch-client watch-server",
     "watch-client": "tsc -w -p .",
     "watch-server": "tsc -w -p server",
-    "precommit": "lint-staged",
-    "prepush": "npm run test:server",
-    "lint": "tslint -p tslint.json",
+    "lint": "sh ./build/lint-all.sh",
     "test:server": "cd server && npm run compile && npm test",
     "test:e2e": "sh ./test/e2e.sh",
     "test": "run-s lint compile test:server test:e2e",
-    "docs": "bash ./build/update-docs.sh",
+    "docs": "sh ./build/update-docs.sh",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test:server"
+    }
+  },
   "lint-staged": {
-    "*.ts": [
-      "tslint --fix",
-      "git add"
+    "linters": {
+      "*": [
+        "sh ./build/lint.sh",
+        "git add"
+      ]
+    },
+    "ignore": [
+      "test/fixture/client/**/*"
     ]
   },
   "repository": {
@@ -40,11 +49,10 @@
     "Programming Languages"
   ],
   "engines": {
-    "vscode": "^1.26.0"
+    "vscode": "^1.29.1"
   },
   "dependencies": {
-    "vscode-languageclient": "^5.0.1",
-    "vscode-languageserver-types": "^3.12.0"
+    "vscode-languageclient": "^5.1.1"
   },
   "activationEvents": [
     "onLanguage:vue"
@@ -346,16 +354,25 @@
     }
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.117",
+    "@types/eslint": "^4.16.4",
+    "@types/lodash": "^4.14.118",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.10",
-    "husky": "^1.0.0-rc.15",
-    "lint-staged": "^8.0.5",
+    "@types/prettier": "^1.15.2",
+    "eslint": "^5.9.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "eslint-plugin-vue": "^5.0.0-beta.5",
+    "husky": "^1.2.0",
+    "lint-staged": "^8.1.0",
     "mocha": "^5.2.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.15.2",
-    "tslint": "^5.8.0",
-    "typescript": "^3.0.3",
-    "vscode": "^1.1.21"
+    "ts-node": "^7.0.1",
+    "typescript": "^3.1.6",
+    "typescript-eslint-parser": "^21.0.1",
+    "vscode": "^1.1.22",
+    "vscode-languageserver-types": "^3.13.0",
+    "vue-eslint-parser": "^3.3.0"
   }
 }
