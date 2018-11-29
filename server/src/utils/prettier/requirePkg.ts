@@ -2,9 +2,9 @@
  * Adapted from
  * https://github.com/prettier/prettier-vscode/blob/1843acb5d/src/requirePkg.ts
  */
-import * as path from 'path';
-import * as resolve from 'resolve';
-const readPkgUp = require('read-pkg-up');
+import * as path from "path";
+import * as resolve from "resolve";
+const readPkgUp = require("read-pkg-up");
 
 /**
  * Recursively search for a package.json upwards containing given package
@@ -23,7 +23,7 @@ function findPkg(fspath: string, pkgName: string): string | undefined {
   ) {
     return resolve.sync(pkgName, { basedir: res.path });
   } else if (res.path) {
-    const parent = path.resolve(path.dirname(res.path), '..');
+    const parent = path.resolve(path.dirname(res.path), "..");
     if (parent !== root) {
       return findPkg(parent, pkgName);
     }

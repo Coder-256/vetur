@@ -1,10 +1,15 @@
-import { CompletionList, CompletionItemKind, InsertTextFormat, CompletionItem } from 'vscode-languageserver-types';
+import {
+  CompletionList,
+  CompletionItemKind,
+  InsertTextFormat,
+  CompletionItem
+} from "vscode-languageserver-types";
 
 export function doScaffoldComplete(): CompletionList {
   const topLevelCompletions: CompletionItem[] = [
     {
-      label: 'scaffold',
-      documentation: 'Scaffold <template>, <script> and <style>',
+      label: "scaffold",
+      documentation: "Scaffold <template>, <script> and <style>",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<template>
@@ -23,8 +28,8 @@ export default {
 `
     },
     {
-      label: 'template with html',
-      documentation: 'Scaffold <template> with html',
+      label: "template with html",
+      documentation: "Scaffold <template> with html",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<template>
@@ -33,8 +38,8 @@ export default {
 `
     },
     {
-      label: 'template with pug',
-      documentation: 'Scaffold <template> with pug',
+      label: "template with pug",
+      documentation: "Scaffold <template> with pug",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<template lang="pug">
@@ -43,8 +48,8 @@ export default {
 `
     },
     {
-      label: 'script with JavaScript',
-      documentation: 'Scaffold <script> with JavaScript',
+      label: "script with JavaScript",
+      documentation: "Scaffold <script> with JavaScript",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<script>
@@ -55,8 +60,8 @@ export default {
 `
     },
     {
-      label: 'script with TypeScript',
-      documentation: 'Scaffold <script> with TypeScript',
+      label: "script with TypeScript",
+      documentation: "Scaffold <script> with TypeScript",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<script lang="ts">
@@ -68,8 +73,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with CSS',
-      documentation: 'Scaffold <style> with CSS',
+      label: "style with CSS",
+      documentation: "Scaffold <style> with CSS",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style>
@@ -78,8 +83,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with CSS (scoped)',
-      documentation: 'Scaffold <style> with CSS (scoped)',
+      label: "style with CSS (scoped)",
+      documentation: "Scaffold <style> with CSS (scoped)",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style scoped>
@@ -88,8 +93,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with scss',
-      documentation: 'Scaffold <style> with scss',
+      label: "style with scss",
+      documentation: "Scaffold <style> with scss",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style lang="scss">
@@ -98,8 +103,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with scss (scoped)',
-      documentation: 'Scaffold <style> with scss (scoped)',
+      label: "style with scss (scoped)",
+      documentation: "Scaffold <style> with scss (scoped)",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style lang="scss" scoped>
@@ -108,8 +113,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with less',
-      documentation: 'Scaffold <style> with less',
+      label: "style with less",
+      documentation: "Scaffold <style> with less",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style lang="less">
@@ -118,8 +123,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with less (scoped)',
-      documentation: 'Scaffold <style> with less (scoped)',
+      label: "style with less (scoped)",
+      documentation: "Scaffold <style> with less (scoped)",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style lang="less" scoped>
@@ -128,8 +133,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with sass',
-      documentation: 'Scaffold <style> with sass',
+      label: "style with sass",
+      documentation: "Scaffold <style> with sass",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style lang="sass">
@@ -138,8 +143,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with sass (scoped)',
-      documentation: 'Scaffold <style> with sass (scoped)',
+      label: "style with sass (scoped)",
+      documentation: "Scaffold <style> with sass (scoped)",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style lang="sass" scoped>
@@ -148,8 +153,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with postcss',
-      documentation: 'Scaffold <style> with postcss',
+      label: "style with postcss",
+      documentation: "Scaffold <style> with postcss",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style lang="postcss">
@@ -158,8 +163,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with postcss (scoped)',
-      documentation: 'Scaffold <style> with postcss (scoped)',
+      label: "style with postcss (scoped)",
+      documentation: "Scaffold <style> with postcss (scoped)",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style lang="postcss" scoped>
@@ -168,8 +173,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with stylus',
-      documentation: 'Scaffold <style> with stylus',
+      label: "style with stylus",
+      documentation: "Scaffold <style> with stylus",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style lang="stylus">
@@ -178,8 +183,8 @@ export default Vue.extend({
 `
     },
     {
-      label: 'style with stylus (scoped)',
-      documentation: 'Scaffold <style> with stylus (scoped)',
+      label: "style with stylus (scoped)",
+      documentation: "Scaffold <style> with stylus (scoped)",
       kind: CompletionItemKind.Snippet,
       insertTextFormat: InsertTextFormat.Snippet,
       insertText: `<style lang="stylus" scoped>

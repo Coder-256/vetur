@@ -1,4 +1,4 @@
-import { LanguageMode } from './languageModes';
+import { LanguageMode } from "./languageModes";
 
 export const NULL_HOVER = {
   contents: []
@@ -16,7 +16,7 @@ export const NULL_COMPLETION = {
 };
 
 export const nullMode: LanguageMode = {
-  getId: () => '',
+  getId: () => "",
   onDocumentRemoved() {},
   dispose() {},
   doHover: () => NULL_HOVER,

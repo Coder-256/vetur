@@ -1,4 +1,4 @@
-declare module 'eslint' {
+declare module "eslint" {
   export interface ESLintError {
     ruleId: string;
     severity: number;
@@ -21,6 +21,6 @@ declare module 'eslint' {
   }
 }
 
-declare module 'eslint-plugin-vue';
-declare module 'parse-gitignore';
-declare module '*.json';
+declare module "eslint-plugin-vue";
+declare module "parse-gitignore";
+declare module "*.json";

@@ -1,6 +1,6 @@
-import * as ts from 'typescript';
-import { Definition, Range } from 'vscode-languageserver-types';
-import Uri from 'vscode-uri';
+import * as ts from "typescript";
+import { Definition, Range } from "vscode-languageserver-types";
+import Uri from "vscode-uri";
 
 export interface PropInfo {
   name: string;
@@ -13,14 +13,19 @@ export interface ComponentInfo {
   props?: PropInfo[];
 }
 
-export function findComponents(service: ts.LanguageService, fileFsPath: string): ComponentInfo[] {
+export function findComponents(
+  service: ts.LanguageService,
+  fileFsPath: string
+): ComponentInfo[] {
   const program = service.getProgram();
   if (!program) {
     return [];
   }
 
   const sourceFile = program.getSourceFile(fileFsPath)!;
-  const exportStmt = sourceFile.statements.filter(st => st.kind === ts.SyntaxKind.ExportAssignment);
+  const exportStmt = sourceFile.statements.filter(
+    st => st.kind === ts.SyntaxKind.ExportAssignment
+  );
   if (exportStmt.length === 0) {
     return [];
   }
@@ -31,11 +36,13 @@ export function findComponents(service: ts.LanguageService, fileFsPath: string):
   }
   const checker = program.getTypeChecker();
   const compType = checker.getTypeAtLocation(comp);
-  const childComps = getPropertyTypeOfType(compType, 'components', checker);
+  const childComps = getPropertyTypeOfType(compType, "components", checker);
   if (!childComps) {
     return [];
   }
-  return checker.getPropertiesOfType(childComps).map(s => getCompInfo(s, checker));
+  return checker
+    .getPropertiesOfType(childComps)
+    .map(s => getCompInfo(s, checker));
 }
 
 function getComponentFromExport(exportExpr: ts.Expression) {
@@ -50,14 +57,20 @@ function getComponentFromExport(exportExpr: ts.Expression) {
 }
 
 // Vue.extend will return a type without `props`. We need to find the object literal
-function findDefinitionLiteralSymbol(symbol: ts.Symbol, checker: ts.TypeChecker) {
+function findDefinitionLiteralSymbol(
+  symbol: ts.Symbol,
+  checker: ts.TypeChecker
+) {
   const node = symbol.valueDeclaration;
   if (!node) {
     return undefined;
   }
   if (node.kind === ts.SyntaxKind.PropertyAssignment) {
     // {comp: importedComponent}
-    symbol = checker.getSymbolAtLocation((node as ts.PropertyAssignment).initializer) || symbol;
+    symbol =
+      checker.getSymbolAtLocation(
+        (node as ts.PropertyAssignment).initializer
+      ) || symbol;
   } else if (node.kind === ts.SyntaxKind.ShorthandPropertyAssignment) {
     // {comp}
     symbol = checker.getShorthandAssignmentValueSymbol(node) || symbol;
@@ -99,7 +112,7 @@ function getCompInfo(symbol: ts.Symbol, checker: ts.TypeChecker) {
     info.props = arrayProps;
     return info;
   }
-  const props = getPropertyTypeOfType(compType, 'props', checker);
+  const props = getPropertyTypeOfType(compType, "props", checker);
   if (!props) {
     return info;
   }
@@ -114,18 +127,18 @@ function getCompInfo(symbol: ts.Symbol, checker: ts.TypeChecker) {
 
 function getPropTypeDeclaration(prop: ts.Symbol, checker: ts.TypeChecker) {
   if (!prop.valueDeclaration) {
-    return '';
+    return "";
   }
   const declaration = prop.valueDeclaration.getChildAt(2);
   if (!declaration) {
-    return '';
+    return "";
   }
   if (declaration.kind === ts.SyntaxKind.ObjectLiteralExpression) {
     const text: string[] = [];
     declaration.forEachChild(n => {
       text.push(n.getText());
     });
-    return text.join('\n');
+    return text.join("\n");
   }
   return declaration.getText();
 }
@@ -135,7 +148,7 @@ function isStringLiteral(e: ts.Expression): e is ts.StringLiteral {
 }
 
 function getArrayProps(compType: ts.Type, checker: ts.TypeChecker) {
-  const propSymbol = checker.getPropertyOfType(compType, 'props');
+  const propSymbol = checker.getPropertyOfType(compType, "props");
   if (!propSymbol || !propSymbol.valueDeclaration) {
     return undefined;
   }
@@ -144,10 +157,16 @@ function getArrayProps(compType: ts.Type, checker: ts.TypeChecker) {
     return undefined;
   }
   const propArray = propDef as ts.ArrayLiteralExpression;
-  return propArray.elements.filter(isStringLiteral).map(e => ({ name: hyphenate(e.text) }));
+  return propArray.elements
+    .filter(isStringLiteral)
+    .map(e => ({ name: hyphenate(e.text) }));
 }
 
-function getPropertyTypeOfType(tpe: ts.Type, property: string, checker: ts.TypeChecker) {
+function getPropertyTypeOfType(
+  tpe: ts.Type,
+  property: string,
+  checker: ts.TypeChecker
+) {
   const propSymbol = checker.getPropertyOfType(tpe, property);
   return getSymbolType(propSymbol, checker);
 }
@@ -161,5 +180,5 @@ function getSymbolType(symbol: ts.Symbol | undefined, checker: ts.TypeChecker) {
 
 const hyphenateRE = /\B([A-Z])/g;
 function hyphenate(word: string) {
-  return word.replace(hyphenateRE, '-$1').toLowerCase();
+  return word.replace(hyphenateRE, "-$1").toLowerCase();
 }

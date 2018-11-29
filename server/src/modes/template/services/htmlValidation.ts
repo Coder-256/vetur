@@ -1,6 +1,11 @@
-import { CLIEngine, ESLintError } from 'eslint';
-import { configs } from 'eslint-plugin-vue';
-import { TextDocument, Diagnostic, Range, DiagnosticSeverity } from 'vscode-languageserver-types';
+import { CLIEngine, ESLintError } from "eslint";
+import { configs } from "eslint-plugin-vue";
+import {
+  TextDocument,
+  Diagnostic,
+  Range,
+  DiagnosticSeverity
+} from "vscode-languageserver-types";
 
 function toDiagnostic(error: ESLintError): Diagnostic {
   const line = error.line - 1;
@@ -10,18 +15,24 @@ function toDiagnostic(error: ESLintError): Diagnostic {
   return {
     range: Range.create(line, column, endLine, endColumn),
     message: `\n[${error.ruleId}]\n${error.message}`,
-    source: 'eslint-plugin-vue',
-    severity: error.severity === 1 ? DiagnosticSeverity.Warning : DiagnosticSeverity.Error
+    source: "eslint-plugin-vue",
+    severity:
+      error.severity === 1
+        ? DiagnosticSeverity.Warning
+        : DiagnosticSeverity.Error
   };
 }
 
-export function doValidation(document: TextDocument, engine: CLIEngine): Diagnostic[] {
+export function doValidation(
+  document: TextDocument,
+  engine: CLIEngine
+): Diagnostic[] {
   const rawText = document.getText();
   // skip checking on empty template
-  if (rawText.replace(/\s/g, '') === '') {
+  if (rawText.replace(/\s/g, "") === "") {
     return [];
   }
-  const text = rawText.replace(/ {10}/, '<template>') + '</template>';
+  const text = rawText.replace(/ {10}/, "<template>") + "</template>";
   const report = engine.executeOnText(text, document.uri);
 
   return report.results[0] ? report.results[0].messages.map(toDiagnostic) : [];

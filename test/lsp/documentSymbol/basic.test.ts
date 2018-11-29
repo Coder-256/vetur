@@ -1,18 +1,24 @@
-import * as vscode from 'vscode';
-import * as assert from 'assert';
-import { getDocUri, activateLS, sleep, showFile, FILE_LOAD_SLEEP_TIME } from '../../helper';
-import { range } from '../util';
+import * as vscode from "vscode";
+import * as assert from "assert";
+import {
+  getDocUri,
+  activateLS,
+  sleep,
+  showFile,
+  FILE_LOAD_SLEEP_TIME
+} from "../../helper";
+import { range } from "../util";
 
-describe('Should do documentSymbol', () => {
-  const docUri = getDocUri('client/documentSymbol/Basic.vue');
+describe("Should do documentSymbol", () => {
+  const docUri = getDocUri("client/documentSymbol/Basic.vue");
 
-  before('activate', async () => {
+  before("activate", async () => {
     await activateLS();
     await showFile(docUri);
     await sleep(FILE_LOAD_SLEEP_TIME);
   });
 
-  it('shows all documentSymbols for Basic.vue', async () => {
+  it("shows all documentSymbols for Basic.vue", async () => {
     await testSymbol(docUri, [
       {
         name: '"Basic.vue"',
@@ -20,12 +26,12 @@ describe('Should do documentSymbol', () => {
         range: range(0, 0, 13, 0),
         children: [
           {
-            name: 'template',
+            name: "template",
             range: range(0, 0, 3, 11),
             kind: 7,
             children: [
               {
-                name: 'div.counter-wrapper',
+                name: "div.counter-wrapper",
                 range: range(1, 2, 2, 8),
                 kind: 7
               }
@@ -34,24 +40,24 @@ describe('Should do documentSymbol', () => {
         ]
       },
       {
-        name: 'script',
+        name: "script",
         range: range(5, 0, 13, 9),
         kind: 7,
         children: [
           {
-            name: 'data',
+            name: "data",
             kind: 5,
             range: range(7, 2, 11, 3)
           }
         ]
       },
       {
-        name: 'style',
+        name: "style",
         range: range(15, 0, 19, 8),
         kind: 7,
         children: [
           {
-            name: '.counter-wrapper > *',
+            name: ".counter-wrapper > *",
             kind: 4,
             range: range(16, 0, 18, 1)
           }
@@ -93,21 +99,24 @@ function assertDeepEqual<T>(actual: T, expected: RecursivePartial<T>) {
   function typeMismatch() {
     assert.fail(
       new Error(
-        'Type of input A expected to match type of input B.\n+ expected - actual\n- ' +
+        "Type of input A expected to match type of input B.\n+ expected - actual\n- " +
           JSON.stringify(actual, null, 2) +
-          '\n+ ' +
+          "\n+ " +
           JSON.stringify(expected, null, 2)
       )
     );
   }
 }
 
-async function testSymbol(docUri: vscode.Uri, expectedSymbols: RecursivePartial<vscode.DocumentSymbol>[]) {
+async function testSymbol(
+  docUri: vscode.Uri,
+  expectedSymbols: RecursivePartial<vscode.DocumentSymbol>[]
+) {
   await showFile(docUri);
   await sleep(2000);
 
   const result = (await vscode.commands.executeCommand(
-    'vscode.executeDocumentSymbolProvider',
+    "vscode.executeDocumentSymbolProvider",
     docUri
   )) as vscode.DocumentSymbol[];
 

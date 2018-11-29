@@ -1,11 +1,20 @@
-import { TextDocument, Location, Range, SymbolInformation, SymbolKind } from 'vscode-languageserver-types';
-import { HTMLDocument, Node } from '../parser/htmlParser';
+import {
+  TextDocument,
+  Location,
+  Range,
+  SymbolInformation,
+  SymbolKind
+} from "vscode-languageserver-types";
+import { HTMLDocument, Node } from "../parser/htmlParser";
 
-export function findDocumentSymbols(document: TextDocument, htmlDocument: HTMLDocument): SymbolInformation[] {
+export function findDocumentSymbols(
+  document: TextDocument,
+  htmlDocument: HTMLDocument
+): SymbolInformation[] {
   const symbols = <SymbolInformation[]>[];
 
   htmlDocument.roots.forEach(node => {
-    provideFileSymbolsInternal(document, node, '', symbols);
+    provideFileSymbolsInternal(document, node, "", symbols);
   });
 
   return symbols;
@@ -43,23 +52,23 @@ function nodeToName(node: Node): string {
   let name = node.tag;
 
   if (!name) {
-    return '';
+    return "";
   }
 
   if (node.attributes) {
-    const id = node.attributes['id'];
-    const classes = node.attributes['class'];
+    const id = node.attributes["id"];
+    const classes = node.attributes["class"];
 
     if (id) {
-      name += `#${id.replace(/[\"\']/g, '')}`;
+      name += `#${id.replace(/[\"\']/g, "")}`;
     }
 
     if (classes) {
       name += classes
-        .replace(/[\"\']/g, '')
+        .replace(/[\"\']/g, "")
         .split(/\s+/)
         .map(className => `.${className}`)
-        .join('');
+        .join("");
     }
   }
 

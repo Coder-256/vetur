@@ -1,7 +1,7 @@
-import { removeQuotes } from '../utils/strings';
-import { createScanner } from './template/parser/htmlScanner';
-import { TextDocument, Position, Range } from 'vscode-languageserver-types';
-import { TokenType, Scanner } from './template/parser/htmlScanner';
+import { removeQuotes } from "../utils/strings";
+import { createScanner } from "./template/parser/htmlScanner";
+import { TextDocument, Position, Range } from "vscode-languageserver-types";
+import { TokenType, Scanner } from "./template/parser/htmlScanner";
 
 export interface LanguageRange extends Range {
   languageId: string;
@@ -18,7 +18,7 @@ export interface VueDocumentRegions {
   getImportedScripts(): string[];
 }
 
-type EmbeddedType = 'template' | 'script' | 'style' | 'custom';
+type EmbeddedType = "template" | "script" | "style" | "custom";
 
 interface EmbeddedRegion {
   languageId: string;
@@ -28,18 +28,18 @@ interface EmbeddedRegion {
 }
 
 const defaultType: { [type: string]: string } = {
-  template: 'vue-html',
-  script: 'javascript',
-  style: 'css'
+  template: "vue-html",
+  script: "javascript",
+  style: "css"
 };
 
 export function getDocumentRegions(document: TextDocument): VueDocumentRegions {
   const regions: EmbeddedRegion[] = [];
   const text = document.getText();
   const scanner = createScanner(text);
-  let lastTagName = '';
-  let lastAttributeName = '';
-  let languageIdFromType = '';
+  let lastTagName = "";
+  let lastAttributeName = "";
+  let languageIdFromType = "";
   const importedScripts: string[] = [];
 
   let token = scanner.scan();
@@ -47,43 +47,52 @@ export function getDocumentRegions(document: TextDocument): VueDocumentRegions {
     switch (token) {
       case TokenType.Styles:
         regions.push({
-          languageId: /^(sass|scss|less|postcss|stylus)$/.test(languageIdFromType)
+          languageId: /^(sass|scss|less|postcss|stylus)$/.test(
+            languageIdFromType
+          )
             ? languageIdFromType
-            : defaultType['style'],
+            : defaultType["style"],
           start: scanner.getTokenOffset(),
           end: scanner.getTokenEnd(),
-          type: 'style'
+          type: "style"
         });
-        languageIdFromType = '';
+        languageIdFromType = "";
         break;
       case TokenType.Script:
         regions.push({
-          languageId: languageIdFromType ? languageIdFromType : defaultType['script'],
+          languageId: languageIdFromType
+            ? languageIdFromType
+            : defaultType["script"],
           start: scanner.getTokenOffset(),
           end: scanner.getTokenEnd(),
-          type: 'script'
+          type: "script"
         });
-        languageIdFromType = '';
+        languageIdFromType = "";
         break;
       case TokenType.StartTag:
         const tagName = scanner.getTokenText();
-        if (tagName === 'template') {
+        if (tagName === "template") {
           const templateRegion = scanTemplateRegion(scanner, text);
           if (templateRegion) {
             regions.push(templateRegion);
           }
         }
         lastTagName = tagName;
-        lastAttributeName = '';
+        lastAttributeName = "";
         break;
       case TokenType.AttributeName:
         lastAttributeName = scanner.getTokenText();
         break;
       case TokenType.AttributeValue:
-        if (lastAttributeName === 'lang') {
-          languageIdFromType = getLanguageIdFromLangAttr(scanner.getTokenText());
+        if (lastAttributeName === "lang") {
+          languageIdFromType = getLanguageIdFromLangAttr(
+            scanner.getTokenText()
+          );
         } else {
-          if (lastAttributeName === 'src' && lastTagName.toLowerCase() === 'script') {
+          if (
+            lastAttributeName === "src" &&
+            lastTagName.toLowerCase() === "script"
+          ) {
             let value = scanner.getTokenText();
             if (value[0] === "'" || value[0] === '"') {
               value = value.substr(1, value.length - 1);
@@ -91,29 +100,37 @@ export function getDocumentRegions(document: TextDocument): VueDocumentRegions {
             importedScripts.push(value);
           }
         }
-        lastAttributeName = '';
+        lastAttributeName = "";
         break;
       case TokenType.EndTagClose:
-        lastAttributeName = '';
-        languageIdFromType = '';
+        lastAttributeName = "";
+        languageIdFromType = "";
         break;
     }
     token = scanner.scan();
   }
 
   return {
-    getLanguageRanges: (range: Range) => getLanguageRanges(document, regions, range),
-    getLanguageRangeByType: (type: EmbeddedType) => getLanguageRangeByType(document, regions, type),
-    getEmbeddedDocument: (languageId: string) => getEmbeddedDocument(document, regions, languageId),
-    getEmbeddedDocumentByType: (type: EmbeddedType) => getEmbeddedDocumentByType(document, regions, type),
-    getLanguageAtPosition: (position: Position) => getLanguageAtPosition(document, regions, position),
+    getLanguageRanges: (range: Range) =>
+      getLanguageRanges(document, regions, range),
+    getLanguageRangeByType: (type: EmbeddedType) =>
+      getLanguageRangeByType(document, regions, type),
+    getEmbeddedDocument: (languageId: string) =>
+      getEmbeddedDocument(document, regions, languageId),
+    getEmbeddedDocumentByType: (type: EmbeddedType) =>
+      getEmbeddedDocumentByType(document, regions, type),
+    getLanguageAtPosition: (position: Position) =>
+      getLanguageAtPosition(document, regions, position),
     getLanguagesInDocument: () => getLanguagesInDocument(document, regions),
     getImportedScripts: () => importedScripts
   };
 }
 
-function scanTemplateRegion(scanner: Scanner, text: string): EmbeddedRegion | null {
-  let languageId = 'vue-html';
+function scanTemplateRegion(
+  scanner: Scanner,
+  text: string
+): EmbeddedRegion | null {
+  let languageId = "vue-html";
 
   let token: number;
   let start = 0;
@@ -125,7 +142,7 @@ function scanTemplateRegion(scanner: Scanner, text: string): EmbeddedRegion | nu
   let lastAttributeName = null;
   while (unClosedTemplate !== 0) {
     // skip parsing on non html syntax, just search terminator
-    if (languageId !== 'vue-html' && start !== 0) {
+    if (languageId !== "vue-html" && start !== 0) {
       token = scanner.scanForRegexp(/<\/template>/);
       if (token === TokenType.EOS) {
         return null;
@@ -143,7 +160,7 @@ function scanTemplateRegion(scanner: Scanner, text: string): EmbeddedRegion | nu
       if (token === TokenType.AttributeName) {
         lastAttributeName = scanner.getTokenText();
       } else if (token === TokenType.AttributeValue) {
-        if (lastAttributeName === 'lang') {
+        if (lastAttributeName === "lang") {
           languageId = getLanguageIdFromLangAttr(scanner.getTokenText());
         }
         lastAttributeName = null;
@@ -151,28 +168,34 @@ function scanTemplateRegion(scanner: Scanner, text: string): EmbeddedRegion | nu
         start = scanner.getTokenEnd();
       }
     } else {
-      if (token === TokenType.StartTag && scanner.getTokenText() === 'template') {
+      if (
+        token === TokenType.StartTag &&
+        scanner.getTokenText() === "template"
+      ) {
         unClosedTemplate++;
-      } else if (token === TokenType.EndTag && scanner.getTokenText() === 'template') {
+      } else if (
+        token === TokenType.EndTag &&
+        scanner.getTokenText() === "template"
+      ) {
         unClosedTemplate--;
         // test leading </template>
         const charPosBeforeEndTag = scanner.getTokenOffset() - 3;
-        if (text[charPosBeforeEndTag] === '\n') {
+        if (text[charPosBeforeEndTag] === "\n") {
           break;
         }
       } else if (token === TokenType.Unknown) {
-        if (scanner.getTokenText().charAt(0) === '<') {
+        if (scanner.getTokenText().charAt(0) === "<") {
           const offset = scanner.getTokenOffset();
           const unknownText = text.substr(offset, 11);
-          if (unknownText === '</template>') {
+          if (unknownText === "</template>") {
             unClosedTemplate--;
             // test leading </template>
-            if (text[offset - 1] === '\n') {
+            if (text[offset - 1] === "\n") {
               return {
                 languageId,
                 start,
                 end: offset,
-                type: 'template'
+                type: "template"
               };
             }
           }
@@ -189,26 +212,32 @@ function scanTemplateRegion(scanner: Scanner, text: string): EmbeddedRegion | nu
     languageId,
     start,
     end,
-    type: 'template'
+    type: "template"
   };
 }
 
 function getLanguageIdFromLangAttr(lang: string): string {
   let languageIdFromType = removeQuotes(lang);
-  if (languageIdFromType === 'jade') {
-    languageIdFromType = 'pug';
+  if (languageIdFromType === "jade") {
+    languageIdFromType = "pug";
   }
-  if (languageIdFromType === 'ts') {
-    languageIdFromType = 'typescript';
+  if (languageIdFromType === "ts") {
+    languageIdFromType = "typescript";
   }
   return languageIdFromType;
 }
 
-function getLanguageRanges(document: TextDocument, regions: EmbeddedRegion[], range: Range): LanguageRange[] {
+function getLanguageRanges(
+  document: TextDocument,
+  regions: EmbeddedRegion[],
+  range: Range
+): LanguageRange[] {
   const result: LanguageRange[] = [];
   let currentPos = range ? range.start : Position.create(0, 0);
   let currentOffset = range ? document.offsetAt(range.start) : 0;
-  const endOffset = range ? document.offsetAt(range.end) : document.getText().length;
+  const endOffset = range
+    ? document.offsetAt(range.end)
+    : document.getText().length;
   for (const region of regions) {
     if (region.end > currentOffset && region.start < endOffset) {
       const start = Math.max(region.start, currentOffset);
@@ -217,7 +246,7 @@ function getLanguageRanges(document: TextDocument, regions: EmbeddedRegion[], ra
         result.push({
           start: currentPos,
           end: startPos,
-          languageId: 'vue'
+          languageId: "vue"
         });
       }
       const end = Math.min(region.end, endOffset);
@@ -238,14 +267,17 @@ function getLanguageRanges(document: TextDocument, regions: EmbeddedRegion[], ra
     result.push({
       start: currentPos,
       end: endPos,
-      languageId: 'vue'
+      languageId: "vue"
     });
   }
   return result;
 }
 
-function getLanguagesInDocument(document: TextDocument, regions: EmbeddedRegion[]): string[] {
-  const result = ['vue'];
+function getLanguagesInDocument(
+  document: TextDocument,
+  regions: EmbeddedRegion[]
+): string[] {
+  const result = ["vue"];
   for (const region of regions) {
     if (region.languageId && result.indexOf(region.languageId) === -1) {
       result.push(region.languageId);
@@ -254,7 +286,11 @@ function getLanguagesInDocument(document: TextDocument, regions: EmbeddedRegion[
   return result;
 }
 
-function getLanguageAtPosition(document: TextDocument, regions: EmbeddedRegion[], position: Position): string {
+function getLanguageAtPosition(
+  document: TextDocument,
+  regions: EmbeddedRegion[],
+  position: Position
+): string {
   const offset = document.offsetAt(position);
   for (const region of regions) {
     if (region.start <= offset) {
@@ -265,20 +301,29 @@ function getLanguageAtPosition(document: TextDocument, regions: EmbeddedRegion[]
       break;
     }
   }
-  return 'vue';
+  return "vue";
 }
 
-function getEmbeddedDocument(document: TextDocument, contents: EmbeddedRegion[], languageId: string): TextDocument {
+function getEmbeddedDocument(
+  document: TextDocument,
+  contents: EmbeddedRegion[],
+  languageId: string
+): TextDocument {
   const oldContent = document.getText();
-  let result = '';
+  let result = "";
   for (const c of contents) {
     if (c.languageId === languageId) {
-      result = oldContent.substring(0, c.start).replace(/./g, ' ');
+      result = oldContent.substring(0, c.start).replace(/./g, " ");
       result += oldContent.substring(c.start, c.end);
       break;
     }
   }
-  return TextDocument.create(document.uri, languageId, document.version, result);
+  return TextDocument.create(
+    document.uri,
+    languageId,
+    document.version,
+    result
+  );
 }
 
 function getEmbeddedDocumentByType(
@@ -287,15 +332,25 @@ function getEmbeddedDocumentByType(
   type: EmbeddedType
 ): TextDocument {
   const oldContent = document.getText();
-  let result = '';
+  let result = "";
   for (const c of contents) {
     if (c.type === type) {
-      result = oldContent.substring(0, c.start).replace(/./g, ' ');
+      result = oldContent.substring(0, c.start).replace(/./g, " ");
       result += oldContent.substring(c.start, c.end);
-      return TextDocument.create(document.uri, c.languageId, document.version, result);
+      return TextDocument.create(
+        document.uri,
+        c.languageId,
+        document.version,
+        result
+      );
     }
   }
-  return TextDocument.create(document.uri, defaultType[type], document.version, result);
+  return TextDocument.create(
+    document.uri,
+    defaultType[type],
+    document.version,
+    result
+  );
 }
 
 function getLanguageRangeByType(

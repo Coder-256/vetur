@@ -1,11 +1,14 @@
-import { CompletionTestSetup, testDSL } from '../../test-util/completion-test-util';
+import {
+  CompletionTestSetup,
+  testDSL
+} from "../../test-util/completion-test-util";
 
-import { parseHTMLDocument } from '../parser/htmlParser';
-import { doComplete } from '../services/htmlCompletion';
+import { parseHTMLDocument } from "../parser/htmlParser";
+import { doComplete } from "../services/htmlCompletion";
 
 const setup: CompletionTestSetup = {
-  langId: 'vue-html',
-  docUri: 'test://test/test.html',
+  langId: "vue-html",
+  docUri: "test://test/test.html",
   doComplete(doc, pos) {
     const htmlDoc = parseHTMLDocument(doc);
     return doComplete(doc, pos, htmlDoc, [], {});
@@ -14,8 +17,8 @@ const setup: CompletionTestSetup = {
 
 const vueHtml = testDSL(setup);
 
-suite('Emmet Completion', () => {
-  test('Emmet HTML Expansion', () => {
+suite("Emmet Completion", () => {
+  test("Emmet HTML Expansion", () => {
     vueHtml`ul>li*3|`.has(`ul>li*3`).become(
       `<ul>
 \t<li>\${1}</li>

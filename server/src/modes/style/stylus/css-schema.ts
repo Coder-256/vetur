@@ -21,4 +21,5 @@ interface CSSData {
   };
 }
 
-export const data: CSSData = require('vscode-css-languageservice/lib/umd/data/browsers').data;
+export const data: CSSData = require("vscode-css-languageservice/lib/umd/data/browsers")
+  .data;

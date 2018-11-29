@@ -1,25 +1,25 @@
-import cssColors from './css-colors-list';
-import { Position } from 'vscode-languageserver-types';
+import cssColors from "./css-colors-list";
+import { Position } from "vscode-languageserver-types";
 
 type NodeName =
-  | 'Ident'
-  | 'Selector'
-  | 'Call'
-  | 'Function'
-  | 'Media'
-  | 'Keyframes'
-  | 'Atrule'
-  | 'Import'
-  | 'Require'
-  | 'Supports'
-  | 'Literal'
-  | 'Group'
-  | 'Root'
-  | 'Block'
-  | 'Expression'
-  | 'Rgba'
-  | 'Property'
-  | 'Object';
+  | "Ident"
+  | "Selector"
+  | "Call"
+  | "Function"
+  | "Media"
+  | "Keyframes"
+  | "Atrule"
+  | "Import"
+  | "Require"
+  | "Supports"
+  | "Literal"
+  | "Group"
+  | "Root"
+  | "Block"
+  | "Expression"
+  | "Rgba"
+  | "Property"
+  | "Object";
 
 export interface StylusNode {
   __type: NodeName;
@@ -36,7 +36,7 @@ export interface StylusNode {
   string?: string;
 }
 
-const stylus = require('stylus');
+const stylus = require("stylus");
 
 /**
  * Checks wether node is variable declaration
@@ -44,7 +44,9 @@ const stylus = require('stylus');
  * @return {Boolean}
  */
 export function isVariableNode(node: StylusNode): boolean {
-  return node.__type === 'Ident' && !!node.val && node.val.__type === 'Expression';
+  return (
+    node.__type === "Ident" && !!node.val && node.val.__type === "Expression"
+  );
 }
 
 /**
@@ -53,7 +55,9 @@ export function isVariableNode(node: StylusNode): boolean {
  * @return {Boolean}
  */
 export function isFunctionNode(node: StylusNode): boolean {
-  return node.__type === 'Ident' && !!node.val && node.val.__type === 'Function';
+  return (
+    node.__type === "Ident" && !!node.val && node.val.__type === "Function"
+  );
 }
 
 /**
@@ -62,7 +66,7 @@ export function isFunctionNode(node: StylusNode): boolean {
  * @return {Boolean}
  */
 export function isSelectorNode(node: StylusNode): boolean {
-  return node.__type === 'Selector';
+  return node.__type === "Selector";
 }
 
 /**
@@ -72,7 +76,7 @@ export function isSelectorNode(node: StylusNode): boolean {
  * @return {Boolean}
  */
 export function isSelectorCallNode(node: StylusNode): boolean {
-  return node.__type === 'Call' && node.name === 'Selector';
+  return node.__type === "Call" && node.name === "Selector";
 }
 
 /**
@@ -81,7 +85,17 @@ export function isSelectorCallNode(node: StylusNode): boolean {
  * @return {Boolean}
  */
 export function isAtRuleNode(node: StylusNode): boolean {
-  return ['Media', 'Keyframes', 'Atrule', 'Import', 'Require', 'Supports', 'Literal'].indexOf(node.__type) !== -1;
+  return (
+    [
+      "Media",
+      "Keyframes",
+      "Atrule",
+      "Import",
+      "Require",
+      "Supports",
+      "Literal"
+    ].indexOf(node.__type) !== -1
+  );
 }
 
 /**
@@ -90,13 +104,16 @@ export function isAtRuleNode(node: StylusNode): boolean {
  * @return {Boolean}
  */
 export function isColor(node: StylusNode): boolean {
-  if (node.__type === 'Ident' && cssColors.indexOf(node.name) >= 0) {
+  if (node.__type === "Ident" && cssColors.indexOf(node.name) >= 0) {
     return true;
   }
-  if (node.__type === 'Rgba') {
+  if (node.__type === "Rgba") {
     return true;
   }
-  if (node.__type === 'Call' && ['rgb', 'rgba', 'hsl', 'hsla'].indexOf(node.name) >= 0) {
+  if (
+    node.__type === "Call" &&
+    ["rgb", "rgba", "hsl", "hsla"].indexOf(node.name) >= 0
+  ) {
     return true;
   }
   return false;
@@ -126,7 +143,7 @@ export function buildAst(text: string): StylusNode | null {
  * @param {number[]} scope represented as path from root ast, each path segment is seq number
  */
 function addScope(root: StylusNode, seq: number, scope: number[]) {
-  if (!root || typeof root !== 'object') {
+  if (!root || typeof root !== "object") {
     return;
   }
   root.__scope = scope;
@@ -166,11 +183,14 @@ function addScope(root: StylusNode, seq: number, scope: number[]) {
  * @param {StylusNode} node
  * @return {Array}
  */
-export function flattenAndFilterAst(node: StylusNode, scope: number[] = []): StylusNode[] {
+export function flattenAndFilterAst(
+  node: StylusNode,
+  scope: number[] = []
+): StylusNode[] {
   if (!node.__type) {
     return [];
   }
-  (node as any)['scope'] = scope;
+  (node as any)["scope"] = scope;
 
   let nested = [node];
 
@@ -189,7 +209,11 @@ export function flattenAndFilterAst(node: StylusNode, scope: number[] = []): Sty
   return nested;
 }
 
-export function findNodeAtPosition(root: StylusNode, pos: Position, needBlock = false): StylusNode | null {
+export function findNodeAtPosition(
+  root: StylusNode,
+  pos: Position,
+  needBlock = false
+): StylusNode | null {
   // DFS: first find leaf node
   const block = root.block;
   let children: StylusNode[] = [];
@@ -214,7 +238,7 @@ export function findNodeAtPosition(root: StylusNode, pos: Position, needBlock = 
       return ret;
     }
   }
-  if (root.__type === 'Function' && root.lineno === pos.line + 1) {
+  if (root.__type === "Function" && root.lineno === pos.line + 1) {
     return root; // function node column is inconsisten, ignore
   }
   if (root.lineno !== pos.line + 1 || root.column > pos.character + 1) {

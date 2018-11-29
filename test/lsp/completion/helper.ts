@@ -1,12 +1,16 @@
-import * as vscode from 'vscode';
-import * as assert from 'assert';
-import { showFile } from '../../helper';
+import * as vscode from "vscode";
+import * as assert from "assert";
+import { showFile } from "../../helper";
 
-export async function testCompletion(docUri: vscode.Uri, position: vscode.Position, expectedItems: string[]) {
+export async function testCompletion(
+  docUri: vscode.Uri,
+  position: vscode.Position,
+  expectedItems: string[]
+) {
   await showFile(docUri);
 
   const result = (await vscode.commands.executeCommand(
-    'vscode.executeCompletionItemProvider',
+    "vscode.executeCompletionItemProvider",
     docUri,
     position
   )) as vscode.CompletionList;

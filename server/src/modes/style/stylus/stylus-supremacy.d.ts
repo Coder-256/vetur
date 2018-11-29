@@ -1,4 +1,4 @@
-import { FormattingOptions } from 'stylus-supremacy';
+import { FormattingOptions } from "stylus-supremacy";
 
 export interface IStylusSupremacy {
   createFormattingOptions(options: any): FormattingOptions;

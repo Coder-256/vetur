@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
+"use strict";
 
 export enum TokenType {
   StartCommentTag,
@@ -108,7 +108,7 @@ class MultiLineStream {
       this.position = this.position + match.index! + match[0].length;
       return match[0];
     }
-    return '';
+    return "";
   }
 
   public advanceUntilRegExp(regex: RegExp): string {
@@ -120,7 +120,7 @@ class MultiLineStream {
     } else {
       this.goToEnd();
     }
-    return '';
+    return "";
   }
 
   public advanceUntilChar(ch: number): boolean {
@@ -136,7 +136,11 @@ class MultiLineStream {
   public advanceUntilChars(ch: number[]): boolean {
     while (this.position + ch.length <= this.source.length) {
       let i = 0;
-      for (; i < ch.length && this.source.charCodeAt(this.position + i) === ch[i]; i++) {}
+      for (
+        ;
+        i < ch.length && this.source.charCodeAt(this.position + i) === ch[i];
+        i++
+      ) {}
       if (i === ch.length) {
         return true;
       }
@@ -148,34 +152,39 @@ class MultiLineStream {
 
   public skipWhitespace(): boolean {
     const n = this.advanceWhileChar(ch => {
-      return ch === _WSP || ch === _TAB || ch === _NWL || ch === _LFD || ch === _CAR;
+      return (
+        ch === _WSP || ch === _TAB || ch === _NWL || ch === _LFD || ch === _CAR
+      );
     });
     return n > 0;
   }
 
   public advanceWhileChar(condition: (ch: number) => boolean): number {
     const posNow = this.position;
-    while (this.position < this.len && condition(this.source.charCodeAt(this.position))) {
+    while (
+      this.position < this.len &&
+      condition(this.source.charCodeAt(this.position))
+    ) {
       this.position++;
     }
     return this.position - posNow;
   }
 }
-const _BNG = '!'.charCodeAt(0);
-const _MIN = '-'.charCodeAt(0);
-const _LAN = '<'.charCodeAt(0);
-const _RAN = '>'.charCodeAt(0);
-const _FSL = '/'.charCodeAt(0);
-const _EQS = '='.charCodeAt(0);
+const _BNG = "!".charCodeAt(0);
+const _MIN = "-".charCodeAt(0);
+const _LAN = "<".charCodeAt(0);
+const _RAN = ">".charCodeAt(0);
+const _FSL = "/".charCodeAt(0);
+const _EQS = "=".charCodeAt(0);
 const _DQO = '"'.charCodeAt(0);
 const _SQO = "'".charCodeAt(0);
-const _NWL = '\n'.charCodeAt(0);
-const _CAR = '\r'.charCodeAt(0);
-const _LFD = '\f'.charCodeAt(0);
-const _WSP = ' '.charCodeAt(0);
-const _TAB = '\t'.charCodeAt(0);
-const _LCR = '{'.charCodeAt(0);
-const _RCR = '}'.charCodeAt(0);
+const _NWL = "\n".charCodeAt(0);
+const _CAR = "\r".charCodeAt(0);
+const _LFD = "\f".charCodeAt(0);
+const _WSP = " ".charCodeAt(0);
+const _TAB = "\t".charCodeAt(0);
+const _LCR = "{".charCodeAt(0);
+const _RCR = "}".charCodeAt(0);
 
 export enum ScannerState {
   WithinContent,
@@ -205,7 +214,7 @@ export interface Scanner {
 }
 
 const htmlScriptContents: { [lang: string]: boolean } = {
-  'text/x-handlebars-template': true
+  "text/x-handlebars-template": true
 };
 
 export function createScanner(
@@ -229,13 +238,19 @@ export function createScanner(
   }
 
   function nextAttributeName(): string {
-    return stream.advanceIfRegExp(/^[^\s"'<>/=\x00-\x0F\x7F\x80-\x9F]*/).toLowerCase();
+    return stream
+      .advanceIfRegExp(/^[^\s"'<>/=\x00-\x0F\x7F\x80-\x9F]*/)
+      .toLowerCase();
   }
 
-  function finishToken(offset: number, type: TokenType, errorMessage?: string): TokenType {
+  function finishToken(
+    offset: number,
+    type: TokenType,
+    errorMessage?: string
+  ): TokenType {
     tokenType = type;
     tokenOffset = offset;
-    tokenError = errorMessage || '';
+    tokenError = errorMessage || "";
     return type;
   }
 
@@ -245,7 +260,12 @@ export function createScanner(
     const token = internalScan();
     if (token !== TokenType.EOS && offset === stream.pos()) {
       console.log(
-        'Scanner.scan has not advanced at offset ' + offset + ', state before: ' + oldState + ' after: ' + state
+        "Scanner.scan has not advanced at offset " +
+          offset +
+          ", state before: " +
+          oldState +
+          " after: " +
+          state
       );
       stream.advance(1);
       return finishToken(offset, TokenType.Unknown);
@@ -320,12 +340,20 @@ export function createScanner(
         }
         if (stream.skipWhitespace()) {
           // white space is not valid here
-          return finishToken(offset, TokenType.Whitespace, 'Tag name must directly follow the open bracket.');
+          return finishToken(
+            offset,
+            TokenType.Whitespace,
+            "Tag name must directly follow the open bracket."
+          );
         }
         state = ScannerState.WithinEndTag;
         stream.advanceUntilChar(_RAN);
         if (offset < stream.pos()) {
-          return finishToken(offset, TokenType.Unknown, 'End tag name expected.');
+          return finishToken(
+            offset,
+            TokenType.Unknown,
+            "End tag name expected."
+          );
         }
         return internalScan();
       case ScannerState.WithinEndTag:
@@ -338,7 +366,7 @@ export function createScanner(
           state = ScannerState.WithinContent;
           return finishToken(offset, TokenType.EndTagClose);
         }
-        errorMessage = 'Closing bracket expected.';
+        errorMessage = "Closing bracket expected.";
         break;
       case ScannerState.AfterOpeningStartTag:
         lastTag = nextElementName();
@@ -351,12 +379,20 @@ export function createScanner(
         }
         if (stream.skipWhitespace()) {
           // white space is not valid here
-          return finishToken(offset, TokenType.Whitespace, 'Tag name must directly follow the open bracket.');
+          return finishToken(
+            offset,
+            TokenType.Whitespace,
+            "Tag name must directly follow the open bracket."
+          );
         }
         state = ScannerState.WithinTag;
         stream.advanceUntilChar(_RAN);
         if (offset < stream.pos()) {
-          return finishToken(offset, TokenType.Unknown, 'Start tag name expected.');
+          return finishToken(
+            offset,
+            TokenType.Unknown,
+            "Start tag name expected."
+          );
         }
         return internalScan();
       case ScannerState.WithinTag:
@@ -379,14 +415,14 @@ export function createScanner(
         }
         if (stream.advanceIfChar(_RAN)) {
           // >
-          if (lastTag === 'script') {
+          if (lastTag === "script") {
             if (lastTypeValue && htmlScriptContents[lastTypeValue]) {
               // stay in html
               state = ScannerState.WithinContent;
             } else {
               state = ScannerState.WithinScriptContent;
             }
-          } else if (lastTag === 'style') {
+          } else if (lastTag === "style") {
             state = ScannerState.WithinStyleContent;
           } else {
             state = ScannerState.WithinContent;
@@ -394,7 +430,11 @@ export function createScanner(
           return finishToken(offset, TokenType.StartTagClose);
         }
         stream.advance(1);
-        return finishToken(offset, TokenType.Unknown, 'Unexpected character in tag.');
+        return finishToken(
+          offset,
+          TokenType.Unknown,
+          "Unexpected character in tag."
+        );
       case ScannerState.AfterAttributeName:
         if (stream.skipWhitespace()) {
           hasSpaceAfterTag = true;
@@ -413,7 +453,7 @@ export function createScanner(
         }
         const attributeValue = stream.advanceIfRegExp(/^[^\s"'`=<>\/]+/);
         if (attributeValue.length > 0) {
-          if (lastAttributeName === 'type') {
+          if (lastAttributeName === "type") {
             lastTypeValue = attributeValue;
           }
           state = ScannerState.WithinTag;
@@ -426,8 +466,10 @@ export function createScanner(
           if (stream.advanceUntilChar(ch)) {
             stream.advance(1); // consume quote
           }
-          if (lastAttributeName === 'type') {
-            lastTypeValue = stream.getSource().substring(offset + 1, stream.pos() - 1);
+          if (lastAttributeName === "type") {
+            lastTypeValue = stream
+              .getSource()
+              .substring(offset + 1, stream.pos() - 1);
           }
           state = ScannerState.WithinTag;
           hasSpaceAfterTag = false;
@@ -444,13 +486,13 @@ export function createScanner(
           if (match.length === 0) {
             stream.goToEnd();
             return finishToken(offset, TokenType.Script);
-          } else if (match === '<!--') {
+          } else if (match === "<!--") {
             if (sciptState === 1) {
               sciptState = 2;
             }
-          } else if (match === '-->') {
+          } else if (match === "-->") {
             sciptState = 1;
-          } else if (match[1] !== '/') {
+          } else if (match[1] !== "/") {
             // <script
             if (sciptState === 2) {
               sciptState = 3;

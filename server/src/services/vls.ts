@@ -1,4 +1,4 @@
-import * as path from 'path';
+import * as path from "path";
 import {
   DidChangeConfigurationParams,
   DocumentColorParams,
@@ -8,7 +8,7 @@ import {
   IConnection,
   TextDocumentPositionParams,
   ColorPresentationParams
-} from 'vscode-languageserver';
+} from "vscode-languageserver";
 import {
   ColorInformation,
   CompletionItem,
@@ -28,12 +28,12 @@ import {
   TextDocumentChangeEvent,
   TextEdit,
   ColorPresentation
-} from 'vscode-languageserver-types';
-import Uri from 'vscode-uri';
-import { getLanguageModes, LanguageModes } from '../modes/languageModes';
-import { NULL_COMPLETION, NULL_HOVER, NULL_SIGNATURE } from '../modes/nullMode';
-import { DocumentContext } from '../types';
-import { DocumentService } from './document';
+} from "vscode-languageserver-types";
+import Uri from "vscode-uri";
+import { getLanguageModes, LanguageModes } from "../modes/languageModes";
+import { NULL_COMPLETION, NULL_HOVER, NULL_SIGNATURE } from "../modes/nullMode";
+import { DocumentContext } from "../types";
+import { DocumentService } from "./document";
 
 export class VLS {
   private documentService: DocumentService;
@@ -43,7 +43,7 @@ export class VLS {
   private pendingValidationRequests: { [uri: string]: NodeJS.Timer } = {};
   private validationDelayMs = 200;
   private validation: { [k: string]: boolean } = {
-    'vue-html': true,
+    "vue-html": true,
     html: true,
     css: true,
     scss: true,
@@ -52,7 +52,10 @@ export class VLS {
     javascript: true
   };
 
-  constructor(private workspacePath: string, private lspConnection: IConnection) {
+  constructor(
+    private workspacePath: string,
+    private lspConnection: IConnection
+  ) {
     this.languageModes = getLanguageModes(workspacePath);
 
     this.documentService = new DocumentService();
@@ -68,9 +71,11 @@ export class VLS {
   }
 
   private setupConfigListeners() {
-    this.lspConnection.onDidChangeConfiguration(({ settings }: DidChangeConfigurationParams) => {
-      this.configure(settings);
-    });
+    this.lspConnection.onDidChangeConfiguration(
+      ({ settings }: DidChangeConfigurationParams) => {
+        this.configure(settings);
+      }
+    );
 
     this.documentService.getAllDocuments().forEach(this.triggerValidation);
   }
@@ -80,7 +85,9 @@ export class VLS {
     this.lspConnection.onCompletionResolve(this.onCompletionResolve.bind(this));
 
     this.lspConnection.onDefinition(this.onDefinition.bind(this));
-    this.lspConnection.onDocumentFormatting(this.onDocumentFormatting.bind(this));
+    this.lspConnection.onDocumentFormatting(
+      this.onDocumentFormatting.bind(this)
+    );
     this.lspConnection.onDocumentHighlight(this.onDocumentHighlight.bind(this));
     this.lspConnection.onDocumentLinks(this.onDocumentLinks.bind(this));
     this.lspConnection.onDocumentSymbol(this.onDocumentSymbol.bind(this));
@@ -89,18 +96,22 @@ export class VLS {
     this.lspConnection.onSignatureHelp(this.onSignatureHelp.bind(this));
 
     this.lspConnection.onDocumentColor(this.onDocumentColors.bind(this));
-    this.lspConnection.onColorPresentation(this.onColorPresentations.bind(this));
+    this.lspConnection.onColorPresentation(
+      this.onColorPresentations.bind(this)
+    );
   }
 
   private setupFileChangeListeners() {
-    this.documentService.onDidChangeContent((change: TextDocumentChangeEvent) => {
-      this.triggerValidation(change.document);
-    });
+    this.documentService.onDidChangeContent(
+      (change: TextDocumentChangeEvent) => {
+        this.triggerValidation(change.document);
+      }
+    );
     this.documentService.onDidClose(e => {
       this.removeDocument(e.document);
     });
     this.lspConnection.onDidChangeWatchedFiles(({ changes }) => {
-      const jsMode = this.languageModes.getMode('javascript');
+      const jsMode = this.languageModes.getMode("javascript");
       changes.forEach(c => {
         if (c.type === FileChangeType.Changed) {
           const fsPath = Uri.parse(c.uri).fsPath;
@@ -116,7 +127,7 @@ export class VLS {
 
   configure(config: any): void {
     const veturValidationOptions = config.vetur.validation;
-    this.validation['vue-html'] = veturValidationOptions.template;
+    this.validation["vue-html"] = veturValidationOptions.template;
     this.validation.css = veturValidationOptions.style;
     this.validation.postcss = veturValidationOptions.style;
     this.validation.scss = veturValidationOptions.style;
@@ -135,22 +146,28 @@ export class VLS {
    */
 
   displayInfoMessage(msg: string): void {
-    this.lspConnection.sendNotification('$/displayInfo', msg);
+    this.lspConnection.sendNotification("$/displayInfo", msg);
   }
   displayWarningMessage(msg: string): void {
-    this.lspConnection.sendNotification('$/displayWarning', msg);
+    this.lspConnection.sendNotification("$/displayWarning", msg);
   }
   displayErrorMessage(msg: string): void {
-    this.lspConnection.sendNotification('$/displayError', msg);
+    this.lspConnection.sendNotification("$/displayError", msg);
   }
 
   /**
    * Language Features
    */
 
-  onDocumentFormatting({ textDocument, options }: DocumentFormattingParams): TextEdit[] {
+  onDocumentFormatting({
+    textDocument,
+    options
+  }: DocumentFormattingParams): TextEdit[] {
     const doc = this.documentService.getDocument(textDocument.uri)!;
-    const fullDocRange = Range.create(Position.create(0, 0), doc.positionAt(doc.getText().length));
+    const fullDocRange = Range.create(
+      Position.create(0, 0),
+      doc.positionAt(doc.getText().length)
+    );
 
     const modeRanges = this.languageModes.getModesInRange(doc, fullDocRange);
     const allEdits: TextEdit[] = [];
@@ -171,14 +188,19 @@ export class VLS {
     });
 
     if (errMessages.length !== 0) {
-      this.displayErrorMessage('Formatting failed: "' + errMessages.join('\n') + '"');
+      this.displayErrorMessage(
+        'Formatting failed: "' + errMessages.join("\n") + '"'
+      );
       return [];
     }
 
     return allEdits;
   }
 
-  onCompletion({ textDocument, position }: TextDocumentPositionParams): CompletionList {
+  onCompletion({
+    textDocument,
+    position
+  }: TextDocumentPositionParams): CompletionList {
     const doc = this.documentService.getDocument(textDocument.uri)!;
     const mode = this.languageModes.getModeAtPosition(doc, position);
     if (mode && mode.doComplete) {
@@ -212,7 +234,10 @@ export class VLS {
     return NULL_HOVER;
   }
 
-  onDocumentHighlight({ textDocument, position }: TextDocumentPositionParams): DocumentHighlight[] {
+  onDocumentHighlight({
+    textDocument,
+    position
+  }: TextDocumentPositionParams): DocumentHighlight[] {
     const doc = this.documentService.getDocument(textDocument.uri)!;
     const mode = this.languageModes.getModeAtPosition(doc, position);
     if (mode && mode.findDocumentHighlight) {
@@ -221,7 +246,10 @@ export class VLS {
     return [];
   }
 
-  onDefinition({ textDocument, position }: TextDocumentPositionParams): Definition {
+  onDefinition({
+    textDocument,
+    position
+  }: TextDocumentPositionParams): Definition {
     const doc = this.documentService.getDocument(textDocument.uri)!;
     const mode = this.languageModes.getModeAtPosition(doc, position);
     if (mode && mode.findDefinition) {
@@ -230,7 +258,10 @@ export class VLS {
     return [];
   }
 
-  onReferences({ textDocument, position }: TextDocumentPositionParams): Location[] {
+  onReferences({
+    textDocument,
+    position
+  }: TextDocumentPositionParams): Location[] {
     const doc = this.documentService.getDocument(textDocument.uri)!;
     const mode = this.languageModes.getModeAtPosition(doc, position);
     if (mode && mode.findReferences) {
@@ -243,7 +274,7 @@ export class VLS {
     const doc = this.documentService.getDocument(textDocument.uri)!;
     const documentContext: DocumentContext = {
       resolveReference: ref => {
-        if (this.workspacePath && ref[0] === '/') {
+        if (this.workspacePath && ref[0] === "/") {
           return Uri.file(path.resolve(this.workspacePath, ref)).toString();
         }
         const docUri = Uri.parse(doc.uri);
@@ -264,7 +295,9 @@ export class VLS {
     return links;
   }
 
-  onDocumentSymbol({ textDocument }: DocumentSymbolParams): SymbolInformation[] {
+  onDocumentSymbol({
+    textDocument
+  }: DocumentSymbolParams): SymbolInformation[] {
     const doc = this.documentService.getDocument(textDocument.uri)!;
     const symbols: SymbolInformation[] = [];
 
@@ -288,7 +321,11 @@ export class VLS {
     return colors;
   }
 
-  onColorPresentations({ textDocument, color, range }: ColorPresentationParams): ColorPresentation[] {
+  onColorPresentations({
+    textDocument,
+    color,
+    range
+  }: ColorPresentationParams): ColorPresentation[] {
     const doc = this.documentService.getDocument(textDocument.uri)!;
     const mode = this.languageModes.getModeAtPosition(doc, range.start);
     if (mode && mode.getColorPresentations) {
@@ -297,7 +334,10 @@ export class VLS {
     return [];
   }
 
-  onSignatureHelp({ textDocument, position }: TextDocumentPositionParams): SignatureHelp {
+  onSignatureHelp({
+    textDocument,
+    position
+  }: TextDocumentPositionParams): SignatureHelp {
     const doc = this.documentService.getDocument(textDocument.uri)!;
     const mode = this.languageModes.getModeAtPosition(doc, position);
     if (mode && mode.doSignatureHelp) {
@@ -333,7 +373,7 @@ export class VLS {
 
   doValidate(doc: TextDocument): Diagnostic[] {
     const diagnostics: Diagnostic[] = [];
-    if (doc.languageId === 'vue') {
+    if (doc.languageId === "vue") {
       this.languageModes.getAllModesInDocument(doc).forEach(mode => {
         if (mode.doValidation && this.validation[mode.getId()]) {
           pushAll(diagnostics, mode.doValidation(doc));

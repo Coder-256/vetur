@@ -1,10 +1,20 @@
-import { HTMLDocument } from '../parser/htmlParser';
-import { TokenType, createScanner } from '../parser/htmlScanner';
-import { TextDocument, Range, Position, Hover, MarkedString } from 'vscode-languageserver-types';
-import { IHTMLTagProvider } from '../tagProviders';
-import { NULL_HOVER } from '../../nullMode';
+import { HTMLDocument } from "../parser/htmlParser";
+import { TokenType, createScanner } from "../parser/htmlScanner";
+import {
+  TextDocument,
+  Range,
+  Position,
+  Hover,
+  MarkedString
+} from "vscode-languageserver-types";
+import { IHTMLTagProvider } from "../tagProviders";
+import { NULL_HOVER } from "../../nullMode";
 
-const TRIVIAL_TOKEN = [TokenType.StartTagOpen, TokenType.EndTagOpen, TokenType.Whitespace];
+const TRIVIAL_TOKEN = [
+  TokenType.StartTagOpen,
+  TokenType.EndTagOpen,
+  TokenType.Whitespace
+];
 
 export function doHover(
   document: TextDocument,
@@ -23,8 +33,14 @@ export function doHover(
       let hover: Hover | null = null;
       provider.collectTags((t, label) => {
         if (t === tag) {
-          const tagLabel = open ? '<' + tag + '>' : '</' + tag + '>';
-          hover = { contents: [{ language: 'html', value: tagLabel }, MarkedString.fromPlainText(label)], range };
+          const tagLabel = open ? "<" + tag + ">" : "</" + tag + ">";
+          hover = {
+            contents: [
+              { language: "html", value: tagLabel },
+              MarkedString.fromPlainText(label)
+            ],
+            range
+          };
         }
       });
       if (hover) {
@@ -34,7 +50,11 @@ export function doHover(
     return NULL_HOVER;
   }
 
-  function getAttributeHover(tag: string, attribute: string, range: Range): Hover {
+  function getAttributeHover(
+    tag: string,
+    attribute: string,
+    range: Range
+  ): Hover {
     tag = tag.toLowerCase();
     let hover: Hover = NULL_HOVER;
     for (const provider of tagProviders) {
@@ -42,7 +62,11 @@ export function doHover(
         if (attribute !== attr) {
           return;
         }
-        const contents = [documentation ? MarkedString.fromPlainText(documentation) : `No doc for ${attr}`];
+        const contents = [
+          documentation
+            ? MarkedString.fromPlainText(documentation)
+            : `No doc for ${attr}`
+        ];
         hover = { contents, range };
       });
     }
@@ -87,7 +111,7 @@ export function doHover(
       return getTagHover(node.tag, tagRange, false);
     case TokenType.AttributeName:
       // TODO: treat : as special bind
-      const attribute = scanner.getTokenText().replace(/^:/, '');
+      const attribute = scanner.getTokenText().replace(/^:/, "");
       return getAttributeHover(node.tag, attribute, tagRange);
   }
 

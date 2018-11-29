@@ -41,7 +41,7 @@ This is probably caused by VS Code not installing Vetur properly. Try these meth
   module.exports = {
     resolve: {
       alias: {
-        '@': 'src'
+        "@": "src"
       }
     }
   };

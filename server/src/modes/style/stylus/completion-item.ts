@@ -4,7 +4,7 @@ import {
   TextDocument,
   Position,
   CompletionList
-} from 'vscode-languageserver-types';
+} from "vscode-languageserver-types";
 
 import {
   StylusNode,
@@ -15,16 +15,16 @@ import {
   isSelectorCallNode,
   isSelectorNode,
   isVariableNode
-} from './parser';
+} from "./parser";
 
-import * as cssSchema from './css-schema';
-import builtIn from './built-in';
-import * as _ from 'lodash';
+import * as cssSchema from "./css-schema";
+import builtIn from "./built-in";
+import * as _ from "lodash";
 
 type CSSSchema = typeof cssSchema;
 
 function prepareName(name: string): string {
-  return name.replace(/\{|\}/g, '').trim();
+  return name.replace(/\{|\}/g, "").trim();
 }
 
 /**
@@ -42,7 +42,7 @@ export function isClassOrId(currentWord: string): boolean {
  * @return {Boolean}
  */
 export function isAtRule(currentWord: string): boolean {
-  return _.startsWith(currentWord, '@');
+  return _.startsWith(currentWord, "@");
 }
 
 /**
@@ -65,8 +65,8 @@ export function isValue(cssSchema: CSSSchema, currentWord: string): boolean {
 export function getPropertyName(currentWord: string): string {
   return currentWord
     .trim()
-    .replace(':', ' ')
-    .split(' ')[0];
+    .replace(":", " ")
+    .split(" ")[0];
 }
 
 /**
@@ -86,7 +86,11 @@ export function findPropertySchema(cssSchema: CSSSchema, property: string) {
  * @param {String[]} text - text editor content splitted by lines
  * @return {SymbolInformation}
  */
-function _variableSymbol(node: StylusNode, text: string[], currentWord: string): CompletionItem {
+function _variableSymbol(
+  node: StylusNode,
+  text: string[],
+  currentWord: string
+): CompletionItem {
   const name = node.name;
   const lineno = Number(node.val!.lineno!) - 1;
 
@@ -119,11 +123,15 @@ function _functionSymbol(node: StylusNode, text: string[]): CompletionItem {
  * @param {String} currentWord
  * @return {CompletionItem}
  */
-function _selectorSymbol(node: StylusNode, text: string[], currentWord: string): CompletionItem {
+function _selectorSymbol(
+  node: StylusNode,
+  text: string[],
+  currentWord: string
+): CompletionItem {
   const firstSegment = node.segments[0];
   const name = firstSegment.string
-    ? node.segments!.map(s => s.string).join('')
-    : firstSegment.nodes!.map(s => s.name).join('');
+    ? node.segments!.map(s => s.string).join("")
+    : firstSegment.nodes!.map(s => s.name).join("");
 
   const completionItem = CompletionItem.create(name);
   completionItem.kind = CompletionItemKind.Class;
@@ -147,7 +155,10 @@ function _selectorCallSymbol(node: StylusNode, text: string[]): CompletionItem {
   return completionItem;
 }
 
-function isVisible(useSite: number[] | undefined, defSite: number[] | undefined) {
+function isVisible(
+  useSite: number[] | undefined,
+  defSite: number[] | undefined
+) {
   if (!useSite || !defSite) {
     return true;
   }
@@ -168,16 +179,29 @@ function isVisible(useSite: number[] | undefined, defSite: number[] | undefined)
  * @param {String} currentWord
  * @return {CompletionItem}
  */
-export function getAllSymbols(text: string, currentWord: string, position: Position): CompletionItem[] {
+export function getAllSymbols(
+  text: string,
+  currentWord: string,
+  position: Position
+): CompletionItem[] {
   const ast = buildAst(text);
   if (!ast) {
     return [];
   }
   const node = findNodeAtPosition(ast, position);
   const scope = node ? node.__scope : undefined;
-  const splittedText = text.split('\n');
+  const splittedText = text.split("\n");
   const rawSymbols = flattenAndFilterAst(ast).filter(
-    item => ['Media', 'Keyframes', 'Atrule', 'Import', 'Require', 'Supports', 'Literal'].indexOf(item.__type) === -1
+    item =>
+      [
+        "Media",
+        "Keyframes",
+        "Atrule",
+        "Import",
+        "Require",
+        "Supports",
+        "Literal"
+      ].indexOf(item.__type) === -1
   );
 
   return _.compact(
@@ -210,7 +234,10 @@ export function getAllSymbols(text: string, currentWord: string, position: Posit
  * @param {String} currentWord
  * @return {CompletionItem}
  */
-export function getAtRules(cssSchema: CSSSchema, currentWord: string): CompletionItem[] {
+export function getAtRules(
+  cssSchema: CSSSchema,
+  currentWord: string
+): CompletionItem[] {
   if (!isAtRule(currentWord)) {
     return [];
   }
@@ -231,7 +258,11 @@ export function getAtRules(cssSchema: CSSSchema, currentWord: string): Completio
  * @param {String} currentWord
  * @return {CompletionItem}
  */
-export function getProperties(cssSchema: CSSSchema, currentWord: string, useSeparator: boolean): CompletionItem[] {
+export function getProperties(
+  cssSchema: CSSSchema,
+  currentWord: string,
+  useSeparator: boolean
+): CompletionItem[] {
   if (isClassOrId(currentWord) || isAtRule(currentWord)) {
     return [];
   }
@@ -239,7 +270,7 @@ export function getProperties(cssSchema: CSSSchema, currentWord: string, useSepa
   return cssSchema.data.css.properties.map(property => {
     const completionItem = CompletionItem.create(property.name);
 
-    completionItem.insertText = property.name + (useSeparator ? ': ' : ' ');
+    completionItem.insertText = property.name + (useSeparator ? ": " : " ");
     completionItem.detail = property.desc;
     completionItem.kind = CompletionItemKind.Property;
 
@@ -253,7 +284,10 @@ export function getProperties(cssSchema: CSSSchema, currentWord: string, useSepa
  * @param {String} currentWord
  * @return {CompletionItem}
  */
-export function getValues(cssSchema: CSSSchema, currentWord: string): CompletionItem[] {
+export function getValues(
+  cssSchema: CSSSchema,
+  currentWord: string
+): CompletionItem[] {
   const property = getPropertyName(currentWord);
   const result = findPropertySchema(cssSchema, property);
   const values = result && result.values;
@@ -272,7 +306,10 @@ export function getValues(cssSchema: CSSSchema, currentWord: string): Completion
   });
 }
 
-export function provideCompletionItems(document: TextDocument, position: Position): CompletionList {
+export function provideCompletionItems(
+  document: TextDocument,
+  position: Position
+): CompletionList {
   const start = document.offsetAt(Position.create(position.line, 0));
   const end = document.offsetAt(position);
   const text = document.getText();
@@ -284,7 +321,9 @@ export function provideCompletionItems(document: TextDocument, position: Positio
   if (value) {
     const values = getValues(cssSchema, currentWord);
     const symbols = getAllSymbols(text, currentWord, position).filter(
-      item => item.kind === CompletionItemKind.Variable || item.kind === CompletionItemKind.Function
+      item =>
+        item.kind === CompletionItemKind.Variable ||
+        item.kind === CompletionItemKind.Function
     );
     completions = completions.concat(values, symbols, builtIn);
   } else {

@@ -30,7 +30,11 @@ export interface IHTMLTagProvider {
   getId(): string;
   collectTags(collector: TagCollector): void;
   collectAttributes(tag: string, collector: AttributeCollector): void;
-  collectValues(tag: string, attribute: string, collector: (value: string) => void): void;
+  collectValues(
+    tag: string,
+    attribute: string,
+    collector: (value: string) => void
+  ): void;
 
   /* a prefix for completion's lexical order */
   readonly priority: Priority;
@@ -48,7 +52,10 @@ export interface IValueSets {
   [tag: string]: string[];
 }
 
-export function collectTagsDefault(collector: TagCollector, tagSet: ITagSet): void {
+export function collectTagsDefault(
+  collector: TagCollector,
+  tagSet: ITagSet
+): void {
   for (const tag in tagSet) {
     collector(tag, tagSet[tag].label);
   }
@@ -89,7 +96,7 @@ export function collectValuesDefault(
         continue;
       }
       const typeInfo = attr.type;
-      if (typeInfo === 'v') {
+      if (typeInfo === "v") {
         collector(attribute);
       } else {
         const values = valueSets[typeInfo];
@@ -118,6 +125,10 @@ export function collectValuesDefault(
   // }
 }
 
-export function genAttribute(label: string, type?: string, documentation?: string): Attribute {
+export function genAttribute(
+  label: string,
+  type?: string,
+  documentation?: string
+): Attribute {
   return { label, type, documentation };
 }

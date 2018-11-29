@@ -1,4 +1,4 @@
-import { IConnection, TextDocuments } from 'vscode-languageserver';
+import { IConnection, TextDocuments } from "vscode-languageserver";
 
 /**
  * Service responsible for managing documents being syned through LSP

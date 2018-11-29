@@ -1,12 +1,12 @@
-import { LanguageMode } from '../languageModes';
-import { doScaffoldComplete } from './scaffoldCompletion';
+import { LanguageMode } from "../languageModes";
+import { doScaffoldComplete } from "./scaffoldCompletion";
 
 export function getVueMode(): LanguageMode {
   let config: any = {};
 
   return {
     getId() {
-      return 'vue';
+      return "vue";
     },
     configure(c) {
       config = c;

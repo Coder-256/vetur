@@ -1,5 +1,10 @@
-import { createConnection, InitializeParams, InitializeResult, TextDocumentSyncKind } from 'vscode-languageserver';
-import { VLS } from './services/vls';
+import {
+  createConnection,
+  InitializeParams,
+  InitializeResult,
+  TextDocumentSyncKind
+} from "vscode-languageserver";
+import { VLS } from "./services/vls";
 
 // Create a connection for the server
 const connection =
@@ -18,13 +23,13 @@ connection.onInitialize(
 
     const workspacePath = params.rootPath;
     if (!workspacePath) {
-      console.error('No workspace path found. Vetur initialization failed');
+      console.error("No workspace path found. Vetur initialization failed");
       return {
         capabilities: {}
       };
     }
 
-    console.log('Vetur initialized');
+    console.log("Vetur initialized");
     const vls = new VLS(workspacePath, connection);
 
     if (initializationOptions && initializationOptions.config) {
@@ -34,8 +39,11 @@ connection.onInitialize(
     return {
       capabilities: {
         textDocumentSync: TextDocumentSyncKind.Full,
-        completionProvider: { resolveProvider: true, triggerCharacters: ['.', ':', '<', '"', "'", '/', '@', '*'] },
-        signatureHelpProvider: { triggerCharacters: ['('] },
+        completionProvider: {
+          resolveProvider: true,
+          triggerCharacters: [".", ":", "<", '"', "'", "/", "@", "*"]
+        },
+        signatureHelpProvider: { triggerCharacters: ["("] },
         documentFormattingProvider: true,
         hoverProvider: true,
         documentHighlightProvider: true,

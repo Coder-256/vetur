@@ -58,7 +58,8 @@ If you are using [Webpack's alias](https://webpack.js.org/configuration/resolve/
 For example:
 
 ```html
-└── src ├── components │ ├── a.vue │ └── b.vue ├── containers │ └── index.vue ├── index.js └── jsconfig.json
+└── src ├── components │ ├── a.vue │ └── b.vue ├── containers │ └── index.vue
+├── index.js └── jsconfig.json
 ```
 
 jsconfig.json:
@@ -77,6 +78,6 @@ jsconfig.json:
 index.vue
 
 ```javascript
-import a from 'components/a.vue';
-import b from 'components/b.vue';
+import a from "components/a.vue";
+import b from "components/b.vue";
 ```

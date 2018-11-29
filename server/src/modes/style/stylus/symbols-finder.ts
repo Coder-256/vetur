@@ -1,4 +1,10 @@
-import { TextDocument, SymbolInformation, SymbolKind, Range, Position } from 'vscode-languageserver-types';
+import {
+  TextDocument,
+  SymbolInformation,
+  SymbolKind,
+  Range,
+  Position
+} from "vscode-languageserver-types";
 
 import {
   StylusNode,
@@ -9,9 +15,9 @@ import {
   isSelectorCallNode,
   isSelectorNode,
   isVariableNode
-} from './parser';
+} from "./parser";
 
-import * as _ from 'lodash';
+import * as _ from "lodash";
 
 /**
  * Generates hash for symbol for comparison with other symbols
@@ -19,7 +25,9 @@ import * as _ from 'lodash';
  * @return {String}
  */
 function _buildHashFromSymbol(symbol: SymbolInformation): string {
-  return `${symbol.kind}_${symbol.name}_${symbol.location.range.start.line}_${symbol.location.range.end.line}`;
+  return `${symbol.kind}_${symbol.name}_${symbol.location.range.start.line}_${
+    symbol.location.range.end.line
+  }`;
 }
 
 /**
@@ -28,7 +36,7 @@ function _buildHashFromSymbol(symbol: SymbolInformation): string {
  * @return String
  */
 function prepareName(name: string): string {
-  return name.replace(/\{|\}/g, '').trim();
+  return name.replace(/\{|\}/g, "").trim();
 }
 
 /**
@@ -73,8 +81,8 @@ function _functionSymbol(node: StylusNode, text: string[]): SymbolInformation {
 function _selectorSymbol(node: StylusNode, text: string[]): SymbolInformation {
   const firstSegment = node.segments[0];
   const name = firstSegment.string
-    ? node.segments.map(s => s.string).join('')
-    : firstSegment.nodes!.map(s => s.name).join('');
+    ? node.segments.map(s => s.string).join("")
+    : firstSegment.nodes!.map(s => s.name).join("");
   const lineno = Number(firstSegment.lineno) - 1;
   const column = node.column - 1;
 
@@ -91,7 +99,10 @@ function _selectorSymbol(node: StylusNode, text: string[]): SymbolInformation {
  * @param {String[]} text - text editor content splitted by lines
  * @return {SymbolInformation}
  */
-function _selectorCallSymbol(node: StylusNode, text: string[]): SymbolInformation {
+function _selectorCallSymbol(
+  node: StylusNode,
+  text: string[]
+): SymbolInformation {
   const lineno = Number(node.lineno) - 1;
   const name = prepareName(text[lineno]);
   const column = Math.max(text[lineno].indexOf(name), 0);
@@ -99,7 +110,11 @@ function _selectorCallSymbol(node: StylusNode, text: string[]): SymbolInformatio
   const posStart = Position.create(lineno, column);
   const posEnd = Position.create(lineno, column + name.length);
 
-  return SymbolInformation.create(name, SymbolKind.Class, Range.create(posStart, posEnd));
+  return SymbolInformation.create(
+    name,
+    SymbolKind.Class,
+    Range.create(posStart, posEnd)
+  );
 }
 
 /**
@@ -116,7 +131,11 @@ function _atRuleSymbol(node: StylusNode, text: string[]): SymbolInformation {
   const posStart = Position.create(lineno, column);
   const posEnd = Position.create(lineno, column + name.length);
 
-  return SymbolInformation.create(name, SymbolKind.Namespace, Range.create(posStart, posEnd));
+  return SymbolInformation.create(
+    name,
+    SymbolKind.Namespace,
+    Range.create(posStart, posEnd)
+  );
 }
 
 /**
@@ -125,7 +144,10 @@ function _atRuleSymbol(node: StylusNode, text: string[]): SymbolInformation {
  * @param {String[]} text - text editor content splitted by lines
  * @return {SymbolInformation[]}
  */
-function processRawSymbols(rawSymbols: StylusNode[], text: string[]): SymbolInformation[] {
+function processRawSymbols(
+  rawSymbols: StylusNode[],
+  text: string[]
+): SymbolInformation[] {
   return _.compact(
     rawSymbols.map(symNode => {
       if (isVariableNode(symNode)) {
@@ -151,14 +173,16 @@ function processRawSymbols(rawSymbols: StylusNode[], text: string[]): SymbolInfo
   );
 }
 
-export function provideDocumentSymbols(document: TextDocument): SymbolInformation[] {
+export function provideDocumentSymbols(
+  document: TextDocument
+): SymbolInformation[] {
   const text = document.getText();
   const ast = buildAst(text);
   if (!ast) {
     return [];
   }
   const rawSymbols = _.compact(flattenAndFilterAst(ast));
-  const symbolInfos = processRawSymbols(rawSymbols, text.split('\n'));
+  const symbolInfos = processRawSymbols(rawSymbols, text.split("\n"));
 
   return _.uniqBy(symbolInfos, _buildHashFromSymbol);
 }

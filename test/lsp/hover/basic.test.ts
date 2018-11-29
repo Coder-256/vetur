@@ -1,32 +1,41 @@
-import * as vscode from 'vscode';
-import * as assert from 'assert';
-import { getDocUri, activateLS, sleep, showFile, FILE_LOAD_SLEEP_TIME } from '../../helper';
-import { position, sameLineRange } from '../util';
+import * as vscode from "vscode";
+import * as assert from "assert";
+import {
+  getDocUri,
+  activateLS,
+  sleep,
+  showFile,
+  FILE_LOAD_SLEEP_TIME
+} from "../../helper";
+import { position, sameLineRange } from "../util";
 
-describe('Should do hover', () => {
-  const docUri = getDocUri('client/hover/Basic.vue');
+describe("Should do hover", () => {
+  const docUri = getDocUri("client/hover/Basic.vue");
 
-  before('activate', async () => {
+  before("activate", async () => {
     await activateLS();
     await showFile(docUri);
     await sleep(FILE_LOAD_SLEEP_TIME);
   });
 
-  it('shows hover for <img> tag', async () => {
+  it("shows hover for <img> tag", async () => {
     await testHover(docUri, position(4, 7), {
-      contents: ['\n```html\n<img>\n```\n', 'An img element represents an image\\.'],
+      contents: [
+        "\n```html\n<img>\n```\n",
+        "An img element represents an image\\."
+      ],
       range: sameLineRange(4, 7, 10)
     });
   });
 
-  it('shows hover for this.msg', async () => {
+  it("shows hover for this.msg", async () => {
     await testHover(docUri, position(33, 23), {
-      contents: ['\n```ts\n(property) msg: string\n```\n'],
+      contents: ["\n```ts\n(property) msg: string\n```\n"],
       range: sameLineRange(33, 23, 26)
     });
   });
 
-  it('shows hover for `width` in <style>', async () => {
+  it("shows hover for `width` in <style>", async () => {
     await testHover(docUri, position(47, 3), {
       contents: [
         // tslint:disable-next-line
@@ -37,17 +46,21 @@ describe('Should do hover', () => {
   });
 });
 
-async function testHover(docUri: vscode.Uri, position: vscode.Position, expectedHover: vscode.Hover) {
+async function testHover(
+  docUri: vscode.Uri,
+  position: vscode.Position,
+  expectedHover: vscode.Hover
+) {
   await showFile(docUri);
 
   const result = (await vscode.commands.executeCommand(
-    'vscode.executeHoverProvider',
+    "vscode.executeHoverProvider",
     docUri,
     position
   )) as vscode.Hover[];
 
   if (!result[0]) {
-    throw Error('Hover failed');
+    throw Error("Hover failed");
   }
 
   const contents = result[0].contents;

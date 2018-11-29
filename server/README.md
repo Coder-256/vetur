@@ -45,7 +45,9 @@ Then, require the vue-language-server, this would typically look like:
 ```ts
 class VueLanguageClient extends AutoLanguageClient {
   startServerProcess() {
-    return cp.spawn('node', [require.resolve('vue-language-server/dist/htmlServerMain')]);
+    return cp.spawn("node", [
+      require.resolve("vue-language-server/dist/htmlServerMain")
+    ]);
   }
 }
 ```

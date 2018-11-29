@@ -1,6 +1,6 @@
-import { TokenType, createScanner } from './htmlScanner';
-import { isEmptyElement } from '../tagProviders/htmlTags';
-import { TextDocument } from 'vscode-languageserver-types';
+import { TokenType, createScanner } from "./htmlScanner";
+import { isEmptyElement } from "../tagProviders/htmlTags";
+import { TextDocument } from "vscode-languageserver-types";
 
 export class Node {
   public tag?: string;
@@ -15,7 +15,12 @@ export class Node {
 
     return [];
   }
-  constructor(public start: number, public end: number, public children: Node[], public parent: Node) {
+  constructor(
+    public start: number,
+    public end: number,
+    public children: Node[],
+    public parent: Node
+  ) {
     this.isInterpolation = false;
   }
   public isSameTag(tagInLowerCase: string) {
@@ -30,7 +35,9 @@ export class Node {
     return this.children[0];
   }
   public get lastChild(): Node | undefined {
-    return this.children.length ? this.children[this.children.length - 1] : void 0;
+    return this.children.length
+      ? this.children[this.children.length - 1]
+      : void 0;
   }
 
   public findNodeBefore(offset: number): Node {
@@ -75,7 +82,7 @@ export function parse(text: string): HTMLDocument {
   const htmlDocument = new Node(0, text.length, [], null as any);
   let curr = htmlDocument;
   let endTagStart = -1;
-  let pendingAttribute = '';
+  let pendingAttribute = "";
   let token = scanner.scan();
   let attributes: { [k: string]: string } | undefined = {};
   while (token !== TokenType.EOS) {
@@ -141,13 +148,13 @@ export function parse(text: string): HTMLDocument {
         if (!attributes) {
           curr.attributes = attributes = {};
         }
-        attributes[pendingAttribute] = ''; // Support valueless attributes such as 'checked'
+        attributes[pendingAttribute] = ""; // Support valueless attributes such as 'checked'
         break;
       case TokenType.AttributeValue:
         const value = scanner.getTokenText();
         if (attributes && pendingAttribute) {
           attributes[pendingAttribute] = value;
-          pendingAttribute = '';
+          pendingAttribute = "";
         }
         break;
     }

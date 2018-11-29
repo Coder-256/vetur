@@ -1,18 +1,24 @@
-import * as vscode from 'vscode';
-import { getDocUri, activateLS, sleep, showFile, FILE_LOAD_SLEEP_TIME } from '../../helper';
-import { position, sameLineRange, range } from '../util';
-import { testDiagnostics } from './helper';
+import * as vscode from "vscode";
+import {
+  getDocUri,
+  activateLS,
+  sleep,
+  showFile,
+  FILE_LOAD_SLEEP_TIME
+} from "../../helper";
+import { position, sameLineRange, range } from "../util";
+import { testDiagnostics } from "./helper";
 
-describe('Should find common diagnostics for all regions', () => {
-  const docUri = getDocUri('client/diagnostics/Basic.vue');
+describe("Should find common diagnostics for all regions", () => {
+  const docUri = getDocUri("client/diagnostics/Basic.vue");
 
-  before('activate', async () => {
+  before("activate", async () => {
     await activateLS();
     await showFile(docUri);
     await sleep(FILE_LOAD_SLEEP_TIME);
   });
 
-  it('shows diagnostic errors for <script> region', async () => {
+  it("shows diagnostic errors for <script> region", async () => {
     const expectedDiagnostics: vscode.Diagnostic[] = [
       {
         range: sameLineRange(25, 4, 5),
@@ -22,7 +28,8 @@ describe('Should find common diagnostics for all regions', () => {
       {
         range: sameLineRange(7, 9, 12),
         severity: vscode.DiagnosticSeverity.Error,
-        message: "Argument of type '\"5\"' is not assignable to parameter of type 'number'."
+        message:
+          "Argument of type '\"5\"' is not assignable to parameter of type 'number'."
       },
       {
         range: sameLineRange(8, 0, 29),
@@ -56,14 +63,14 @@ describe('Should find common diagnostics for all regions', () => {
     await testDiagnostics(docUri, position(2, 5), expectedDiagnostics);
   });
 
-  it('shows diagnostic errors for <style> region', async () => {
+  it("shows diagnostic errors for <style> region", async () => {
     const expectedDiagnostics: vscode.Diagnostic[] = [
       {
         severity: vscode.DiagnosticSeverity.Error,
-        message: 'property value expected',
+        message: "property value expected",
         range: sameLineRange(33, 0, 1),
-        code: 'css-propertyvalueexpected',
-        source: 'scss'
+        code: "css-propertyvalueexpected",
+        source: "scss"
       }
     ];
 

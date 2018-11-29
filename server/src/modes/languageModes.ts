@@ -17,16 +17,19 @@ import {
   ColorInformation,
   Color,
   ColorPresentation
-} from 'vscode-languageserver-types';
+} from "vscode-languageserver-types";
 
-import { getLanguageModelCache, LanguageModelCache } from './languageModelCache';
-import { getDocumentRegions, VueDocumentRegions } from './embeddedSupport';
-import { getVueMode } from './vue';
-import { getCSSMode, getSCSSMode, getLESSMode, getPostCSSMode } from './style';
-import { getJavascriptMode } from './script/javascript';
-import { getVueHTMLMode } from './template';
-import { getStylusMode } from './style/stylus';
-import { DocumentContext } from '../types';
+import {
+  getLanguageModelCache,
+  LanguageModelCache
+} from "./languageModelCache";
+import { getDocumentRegions, VueDocumentRegions } from "./embeddedSupport";
+import { getVueMode } from "./vue";
+import { getCSSMode, getSCSSMode, getLESSMode, getPostCSSMode } from "./style";
+import { getJavascriptMode } from "./script/javascript";
+import { getVueHTMLMode } from "./template";
+import { getStylusMode } from "./style/stylus";
+import { DocumentContext } from "../types";
 
 export interface LanguageMode {
   getId(): string;
@@ -36,14 +39,28 @@ export interface LanguageMode {
   doResolve?(document: TextDocument, item: CompletionItem): CompletionItem;
   doHover?(document: TextDocument, position: Position): Hover;
   doSignatureHelp?(document: TextDocument, position: Position): SignatureHelp;
-  findDocumentHighlight?(document: TextDocument, position: Position): DocumentHighlight[];
+  findDocumentHighlight?(
+    document: TextDocument,
+    position: Position
+  ): DocumentHighlight[];
   findDocumentSymbols?(document: TextDocument): SymbolInformation[];
-  findDocumentLinks?(document: TextDocument, documentContext: DocumentContext): DocumentLink[];
+  findDocumentLinks?(
+    document: TextDocument,
+    documentContext: DocumentContext
+  ): DocumentLink[];
   findDefinition?(document: TextDocument, position: Position): Definition;
   findReferences?(document: TextDocument, position: Position): Location[];
-  format?(document: TextDocument, range: Range, options: FormattingOptions): TextEdit[];
+  format?(
+    document: TextDocument,
+    range: Range,
+    options: FormattingOptions
+  ): TextEdit[];
   findDocumentColors?(document: TextDocument): ColorInformation[];
-  getColorPresentations?(document: TextDocument, color: Color, range: Range): ColorPresentation[];
+  getColorPresentations?(
+    document: TextDocument,
+    color: Color,
+    range: Range
+  ): ColorPresentation[];
 
   onDocumentChanged?(filePath: string): void;
   onDocumentRemoved(document: TextDocument): void;
@@ -51,7 +68,10 @@ export interface LanguageMode {
 }
 
 export interface LanguageModes {
-  getModeAtPosition(document: TextDocument, position: Position): LanguageMode | null;
+  getModeAtPosition(
+    document: TextDocument,
+    position: Position
+  ): LanguageMode | null;
   getModesInRange(document: TextDocument, range: Range): LanguageModeRange[];
   getAllModes(): LanguageMode[];
   getAllModesInDocument(document: TextDocument): LanguageMode[];
@@ -65,8 +85,14 @@ export interface LanguageModeRange extends Range {
   attributeValue?: boolean;
 }
 
-export function getLanguageModes(workspacePath: string | null | undefined): LanguageModes {
-  const documentRegions = getLanguageModelCache<VueDocumentRegions>(10, 60, document => getDocumentRegions(document));
+export function getLanguageModes(
+  workspacePath: string | null | undefined
+): LanguageModes {
+  const documentRegions = getLanguageModelCache<VueDocumentRegions>(
+    10,
+    60,
+    document => getDocumentRegions(document)
+  );
 
   let modelCaches: LanguageModelCache<any>[] = [];
   modelCaches.push(documentRegions);
@@ -74,7 +100,7 @@ export function getLanguageModes(workspacePath: string | null | undefined): Lang
   const jsMode = getJavascriptMode(documentRegions, workspacePath);
   let modes: { [k: string]: LanguageMode } = {
     vue: getVueMode(),
-    'vue-html': getVueHTMLMode(documentRegions, workspacePath, jsMode),
+    "vue-html": getVueHTMLMode(documentRegions, workspacePath, jsMode),
     css: getCSSMode(documentRegions),
     postcss: getPostCSSMode(documentRegions),
     scss: getSCSSMode(documentRegions),
@@ -86,8 +112,13 @@ export function getLanguageModes(workspacePath: string | null | undefined): Lang
   };
 
   return {
-    getModeAtPosition(document: TextDocument, position: Position): LanguageMode | null {
-      const languageId = documentRegions.get(document).getLanguageAtPosition(position);
+    getModeAtPosition(
+      document: TextDocument,
+      position: Position
+    ): LanguageMode | null {
+      const languageId = documentRegions
+        .get(document)
+        .getLanguageAtPosition(position);
       if (languageId) {
         return modes[languageId];
       }
@@ -108,7 +139,9 @@ export function getLanguageModes(workspacePath: string | null | undefined): Lang
     },
     getAllModesInDocument(document: TextDocument): LanguageMode[] {
       const result = [];
-      for (const languageId of documentRegions.get(document).getLanguagesInDocument()) {
+      for (const languageId of documentRegions
+        .get(document)
+        .getLanguagesInDocument()) {
         const mode = modes[languageId];
         if (mode) {
           result.push(mode);

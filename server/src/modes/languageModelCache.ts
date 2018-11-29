@@ -1,4 +1,4 @@
-import { TextDocument } from 'vscode-languageserver';
+import { TextDocument } from "vscode-languageserver";
 
 export interface LanguageModelCache<T> {
   get(document: TextDocument): T;
@@ -11,7 +11,14 @@ export function getLanguageModelCache<T>(
   cleanupIntervalTimeInSec: number,
   parse: (document: TextDocument) => T
 ): LanguageModelCache<T> {
-  let languageModels: { [uri: string]: { version: number; languageId: string; cTime: number; languageModel: T } } = {};
+  let languageModels: {
+    [uri: string]: {
+      version: number;
+      languageId: string;
+      cTime: number;
+      languageModel: T;
+    };
+  } = {};
   let nModels = 0;
 
   let cleanupInterval: NodeJS.Timer;
@@ -34,12 +41,21 @@ export function getLanguageModelCache<T>(
       const version = document.version;
       const languageId = document.languageId;
       const languageModelInfo = languageModels[document.uri];
-      if (languageModelInfo && languageModelInfo.version === version && languageModelInfo.languageId === languageId) {
+      if (
+        languageModelInfo &&
+        languageModelInfo.version === version &&
+        languageModelInfo.languageId === languageId
+      ) {
         languageModelInfo.cTime = Date.now();
         return languageModelInfo.languageModel;
       }
       const languageModel = parse(document);
-      languageModels[document.uri] = { languageModel, version, languageId, cTime: Date.now() };
+      languageModels[document.uri] = {
+        languageModel,
+        version,
+        languageId,
+        cTime: Date.now()
+      };
       if (!languageModelInfo) {
         nModels++;
       }
@@ -69,7 +85,7 @@ export function getLanguageModelCache<T>(
       }
     },
     dispose() {
-      if (typeof cleanupInterval !== 'undefined') {
+      if (typeof cleanupInterval !== "undefined") {
         clearInterval(cleanupInterval);
         cleanupInterval = null as any;
         languageModels = {};
