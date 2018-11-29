@@ -1,4 +1,7 @@
-import { LanguageModelCache, getLanguageModelCache } from '../languageModelCache';
+import {
+  LanguageModelCache,
+  getLanguageModelCache
+} from "../languageModelCache";
 import {
   SymbolInformation,
   SymbolKind,
@@ -21,23 +24,24 @@ import {
   CompletionList,
   Position,
   FormattingOptions
-} from 'vscode-languageserver-types';
-import { LanguageMode } from '../languageModes';
-import { VueDocumentRegions, LanguageRange } from '../embeddedSupport';
-import { getServiceHost } from './serviceHost';
-import { findComponents, ComponentInfo } from './findComponents';
-import { prettierify, prettierEslintify } from '../../utils/prettier';
-import { getFileFsPath, getFilePath } from '../../utils/paths';
+} from "vscode-languageserver-types";
+import { LanguageMode } from "../languageModes";
+import { VueDocumentRegions, LanguageRange } from "../embeddedSupport";
+import { getServiceHost } from "./serviceHost";
+import { findComponents, ComponentInfo } from "./findComponents";
+import { prettierify, prettierEslintify } from "../../utils/prettier";
+import { getFileFsPath, getFilePath } from "../../utils/paths";
 
-import Uri from 'vscode-uri';
-import * as ts from 'typescript';
-import * as _ from 'lodash';
+import Uri from "vscode-uri";
+import * as ts from "typescript";
+import * as _ from "lodash";
 
-import { nullMode, NULL_SIGNATURE } from '../nullMode';
+import { nullMode, NULL_SIGNATURE } from "../nullMode";
+import { VLSFormatConfig } from "../../config";
 
 // Todo: After upgrading to LS server 4.0, use CompletionContext for filtering trigger chars
 // https://microsoft.github.io/language-server-protocol/specification#completion-request-leftwards_arrow_with_hook
-const NON_SCRIPT_TRIGGERS = ['<', '/', '*', ':'];
+const NON_SCRIPT_TRIGGERS = ["<", "/", "*", ":"];
 
 export interface ScriptMode extends LanguageMode {
   findComponents(document: TextDocument): ComponentInfo[];
@@ -55,12 +59,12 @@ export function getJavascriptMode(
   }
   const jsDocuments = getLanguageModelCache(10, 60, document => {
     const vueDocument = documentRegions.get(document);
-    return vueDocument.getEmbeddedDocumentByType('script');
+    return vueDocument.getEmbeddedDocumentByType("script");
   });
 
   const regionStart = getLanguageModelCache(10, 60, document => {
     const vueDocument = documentRegions.get(document);
-    return vueDocument.getLanguageRangeByType('script');
+    return vueDocument.getLanguageRangeByType("script");
   });
 
   const serviceHost = getServiceHost(workspacePath, jsDocuments);
@@ -69,7 +73,7 @@ export function getJavascriptMode(
 
   return {
     getId() {
-      return 'javascript';
+      return "javascript";
     },
     configure(c) {
       config = c;
@@ -92,7 +96,7 @@ export function getJavascriptMode(
         return {
           range: convertRange(scriptDoc, diag as ts.TextSpan),
           severity: DiagnosticSeverity.Error,
-          message: ts.flattenDiagnosticMessageText(diag.messageText, '\n')
+          message: ts.flattenDiagnosticMessageText(diag.messageText, "\n")
         };
       });
     },
@@ -109,17 +113,25 @@ export function getJavascriptMode(
         return { isIncomplete: false, items: [] };
       }
       const completions = service.getCompletionsAtPosition(fileFsPath, offset, {
-        includeExternalModuleExports: _.get(config, ['vetur', 'completion', 'autoImport']),
+        includeExternalModuleExports: _.get(config, [
+          "vetur",
+          "completion",
+          "autoImport"
+        ]),
         includeInsertTextCompletions: false
       });
       if (!completions) {
         return { isIncomplete: false, items: [] };
       }
-      const entries = completions.entries.filter(entry => entry.name !== '__vueEditorBridge');
+      const entries = completions.entries.filter(
+        entry => entry.name !== "__vueEditorBridge"
+      );
       return {
         isIncomplete: false,
         items: entries.map((entry, index) => {
-          const range = entry.replacementSpan && convertRange(scriptDoc, entry.replacementSpan);
+          const range =
+            entry.replacementSpan &&
+            convertRange(scriptDoc, entry.replacementSpan);
           return {
             uri: doc.uri,
             position,
@@ -157,7 +169,11 @@ export function getJavascriptMode(
         item.detail = ts.displayPartsToString(details.displayParts);
         item.documentation = ts.displayPartsToString(details.documentation);
         if (details.codeActions && config.vetur.completion.autoImport) {
-          const textEdits = convertCodeAction(doc, details.codeActions, regionStart);
+          const textEdits = convertCodeAction(
+            doc,
+            details.codeActions,
+            regionStart
+          );
           item.additionalTextEdits = textEdits;
         }
         delete item.data;
@@ -171,13 +187,18 @@ export function getJavascriptMode(
       }
 
       const fileFsPath = getFileFsPath(doc.uri);
-      const info = service.getQuickInfoAtPosition(fileFsPath, scriptDoc.offsetAt(position));
+      const info = service.getQuickInfoAtPosition(
+        fileFsPath,
+        scriptDoc.offsetAt(position)
+      );
       if (info) {
         const display = ts.displayPartsToString(info.displayParts);
         const doc = ts.displayPartsToString(info.documentation);
-        const markedContents: MarkedString[] = [{ language: 'ts', value: display }];
+        const markedContents: MarkedString[] = [
+          { language: "ts", value: display }
+        ];
         if (doc) {
-          markedContents.unshift(doc, '\n');
+          markedContents.unshift(doc, "\n");
         }
         return {
           range: convertRange(scriptDoc, info.textSpan),
@@ -193,7 +214,11 @@ export function getJavascriptMode(
       }
 
       const fileFsPath = getFileFsPath(doc.uri);
-      const signHelp = service.getSignatureHelpItems(fileFsPath, scriptDoc.offsetAt(position), {});
+      const signHelp = service.getSignatureHelpItems(
+        fileFsPath,
+        scriptDoc.offsetAt(position),
+        {}
+      );
       if (!signHelp) {
         return NULL_SIGNATURE;
       }
@@ -204,7 +229,7 @@ export function getJavascriptMode(
       };
       signHelp.items.forEach(item => {
         const signature: SignatureInformation = {
-          label: '',
+          label: "",
           documentation: undefined,
           parameters: []
         };
@@ -219,7 +244,9 @@ export function getJavascriptMode(
           signature.label += label;
           signature.parameters!.push(parameter);
           if (i < a.length - 1) {
-            signature.label += ts.displayPartsToString(item.separatorDisplayParts);
+            signature.label += ts.displayPartsToString(
+              item.separatorDisplayParts
+            );
           }
         });
         signature.label += ts.displayPartsToString(item.suffixDisplayParts);
@@ -227,19 +254,27 @@ export function getJavascriptMode(
       });
       return ret;
     },
-    findDocumentHighlight(doc: TextDocument, position: Position): DocumentHighlight[] {
+    findDocumentHighlight(
+      doc: TextDocument,
+      position: Position
+    ): DocumentHighlight[] {
       const { scriptDoc, service } = updateCurrentTextDocument(doc);
       if (!languageServiceIncludesFile(service, doc.uri)) {
         return [];
       }
 
       const fileFsPath = getFileFsPath(doc.uri);
-      const occurrences = service.getOccurrencesAtPosition(fileFsPath, scriptDoc.offsetAt(position));
+      const occurrences = service.getOccurrencesAtPosition(
+        fileFsPath,
+        scriptDoc.offsetAt(position)
+      );
       if (occurrences) {
         return occurrences.map(entry => {
           return {
             range: convertRange(scriptDoc, entry.textSpan),
-            kind: entry.isWriteAccess ? DocumentHighlightKind.Write : DocumentHighlightKind.Text
+            kind: entry.isWriteAccess
+              ? DocumentHighlightKind.Write
+              : DocumentHighlightKind.Text
           };
         });
       }
@@ -258,9 +293,12 @@ export function getJavascriptMode(
       }
       const result: SymbolInformation[] = [];
       const existing: { [k: string]: boolean } = {};
-      const collectSymbols = (item: ts.NavigationBarItem, containerLabel?: string) => {
+      const collectSymbols = (
+        item: ts.NavigationBarItem,
+        containerLabel?: string
+      ) => {
         const sig = item.text + item.kind + item.spans[0].start;
-        if (item.kind !== 'script' && !existing[sig]) {
+        if (item.kind !== "script" && !existing[sig]) {
           const symbol: SymbolInformation = {
             name: item.text,
             kind: convertSymbolKind(item.kind),
@@ -292,7 +330,10 @@ export function getJavascriptMode(
       }
 
       const fileFsPath = getFileFsPath(doc.uri);
-      const definitions = service.getDefinitionAtPosition(fileFsPath, scriptDoc.offsetAt(position));
+      const definitions = service.getDefinitionAtPosition(
+        fileFsPath,
+        scriptDoc.offsetAt(position)
+      );
       if (!definitions) {
         return [];
       }
@@ -318,7 +359,10 @@ export function getJavascriptMode(
       }
 
       const fileFsPath = getFileFsPath(doc.uri);
-      const references = service.getReferencesAtPosition(fileFsPath, scriptDoc.offsetAt(position));
+      const references = service.getReferencesAtPosition(
+        fileFsPath,
+        scriptDoc.offsetAt(position)
+      );
       if (!references) {
         return [];
       }
@@ -339,45 +383,85 @@ export function getJavascriptMode(
       });
       return referenceResults;
     },
-    format(doc: TextDocument, range: Range, formatParams: FormattingOptions): TextEdit[] {
+    format(
+      doc: TextDocument,
+      range: Range,
+      formatParams: FormattingOptions
+    ): TextEdit[] {
       const { scriptDoc, service } = updateCurrentTextDocument(doc);
 
       const defaultFormatter =
-        scriptDoc.languageId === 'javascript'
+        scriptDoc.languageId === "javascript"
           ? config.vetur.format.defaultFormatter.js
           : config.vetur.format.defaultFormatter.ts;
 
-      if (defaultFormatter === 'none') {
+      if (defaultFormatter === "none") {
         return [];
       }
 
-      const needIndent = config.vetur.format.scriptInitialIndent;
-      const parser = scriptDoc.languageId === 'javascript' ? 'babylon' : 'typescript';
-      if (defaultFormatter === 'prettier') {
+      const parser =
+        scriptDoc.languageId === "javascript" ? "babylon" : "typescript";
+      const needInitialIndent = config.vetur.format.scriptInitialIndent;
+      const vlsFormatConfig: VLSFormatConfig = config.vetur.format;
+
+      if (
+        defaultFormatter === "prettier" ||
+        defaultFormatter === "prettier-eslint"
+      ) {
         const code = scriptDoc.getText();
         const filePath = getFileFsPath(scriptDoc.uri);
-        if (config.prettier.eslintIntegration) {
-          return prettierEslintify(code, filePath, range, needIndent, formatParams, config.prettier, parser);
-        } else {
-          return prettierify(code, filePath, range, needIndent, formatParams, config.prettier, parser);
-        }
+
+        return defaultFormatter === "prettier"
+          ? prettierify(
+              code,
+              filePath,
+              range,
+              vlsFormatConfig,
+              parser,
+              needInitialIndent
+            )
+          : prettierEslintify(
+              code,
+              filePath,
+              range,
+              vlsFormatConfig,
+              parser,
+              needInitialIndent
+            );
       } else {
-        const initialIndentLevel = needIndent ? 1 : 0;
+        const initialIndentLevel = needInitialIndent ? 1 : 0;
         const formatSettings: ts.FormatCodeSettings =
-          scriptDoc.languageId === 'javascript' ? config.javascript.format : config.typescript.format;
-        const convertedFormatSettings = convertOptions(formatSettings, formatParams, initialIndentLevel);
+          scriptDoc.languageId === "javascript"
+            ? config.javascript.format
+            : config.typescript.format;
+        const convertedFormatSettings = convertOptions(
+          formatSettings,
+          {
+            tabSize: vlsFormatConfig.options.tabSize,
+            insertSpaces: !vlsFormatConfig.options.useTabs
+          },
+          initialIndentLevel
+        );
 
         const fileFsPath = getFileFsPath(doc.uri);
         const start = scriptDoc.offsetAt(range.start);
         const end = scriptDoc.offsetAt(range.end);
-        const edits = service.getFormattingEditsForRange(fileFsPath, start, end, convertedFormatSettings);
+        const edits = service.getFormattingEditsForRange(
+          fileFsPath,
+          start,
+          end,
+          convertedFormatSettings
+        );
 
         if (!edits) {
           return [];
         }
         const result = [];
         for (const edit of edits) {
-          if (edit.span.start >= start && edit.span.start + edit.span.length <= end) {
+          if (
+            edit.span.start >= start &&
+            edit.span.start + edit.span.length <= end
+          ) {
             result.push({
               range: convertRange(scriptDoc, edit.span),
               newText: edit.newText
@@ -407,10 +491,13 @@ export function getJavascriptMode(
 
 function getSourceDoc(fileName: string, program: ts.Program): TextDocument {
   const sourceFile = program.getSourceFile(fileName)!;
-  return TextDocument.create(fileName, 'vue', 0, sourceFile.getFullText());
+  return TextDocument.create(fileName, "vue", 0, sourceFile.getFullText());
 }
 
-function languageServiceIncludesFile(ls: ts.LanguageService, documentUri: string): boolean {
+function languageServiceIncludesFile(
+  ls: ts.LanguageService,
+  documentUri: string
+): boolean {
   const filePaths = ls.getProgram()!.getRootFileNames();
   const filePath = getFilePath(documentUri);
   return filePaths.includes(filePath);
@@ -424,31 +511,31 @@ function convertRange(document: TextDocument, span: ts.TextSpan): Range {
 
 function convertKind(kind: ts.ScriptElementKind): CompletionItemKind {
   switch (kind) {
-    case 'primitive type':
-    case 'keyword':
+    case "primitive type":
+    case "keyword":
       return CompletionItemKind.Keyword;
-    case 'var':
-    case 'local var':
+    case "var":
+    case "local var":
       return CompletionItemKind.Variable;
-    case 'property':
-    case 'getter':
-    case 'setter':
+    case "property":
+    case "getter":
+    case "setter":
       return CompletionItemKind.Field;
-    case 'function':
-    case 'method':
-    case 'construct':
-    case 'call':
-    case 'index':
+    case "function":
+    case "method":
+    case "construct":
+    case "call":
+    case "index":
       return CompletionItemKind.Function;
-    case 'enum':
+    case "enum":
       return CompletionItemKind.Enum;
-    case 'module':
+    case "module":
       return CompletionItemKind.Module;
-    case 'class':
+    case "class":
       return CompletionItemKind.Class;
-    case 'interface':
+    case "interface":
       return CompletionItemKind.Interface;
-    case 'warning':
+    case "warning":
       return CompletionItemKind.File;
   }
 
@@ -457,26 +544,26 @@ function convertKind(kind: ts.ScriptElementKind): CompletionItemKind {
 
 function convertSymbolKind(kind: ts.ScriptElementKind): SymbolKind {
   switch (kind) {
-    case 'var':
-    case 'local var':
-    case 'const':
+    case "var":
+    case "local var":
+    case "const":
       return SymbolKind.Variable;
-    case 'function':
-    case 'local function':
+    case "function":
+    case "local function":
       return SymbolKind.Function;
-    case 'enum':
+    case "enum":
       return SymbolKind.Enum;
-    case 'module':
+    case "module":
       return SymbolKind.Module;
-    case 'class':
+    case "class":
       return SymbolKind.Class;
-    case 'interface':
+    case "interface":
       return SymbolKind.Interface;
-    case 'method':
+    case "method":
       return SymbolKind.Method;
-    case 'property':
-    case 'getter':
-    case 'setter':
+    case "property":
+    case "getter":
+    case "setter":
       return SymbolKind.Property;
   }
   return SymbolKind.Variable;

@@ -1,32 +1,35 @@
 module.exports = {
-  title: 'Vetur',
-  description: 'Vue tooling for VS Code.',
-  base: '/vetur/',
+  title: "Vetur",
+  description: "Vue tooling for VS Code.",
+  base: "/vetur/",
+  markdown: {
+    linkify: true
+  },
   themeConfig: {
-    repo: 'vuejs/vetur',
+    repo: "vuejs/vetur",
     editLinks: true,
-    docsDir: 'docs',
+    docsDir: "docs",
     sidebar: [
-      '/setup',
+      "/setup",
       {
-        title: 'Features',
+        title: "Features",
         collapsable: false,
         children: [
-          '/highlighting',
-          '/snippet',
-          '/emmet',
-          '/linting-error',
-          '/formatting',
-          '/intellisense',
-          '/debugging',
-          '/framework'
+          "/highlighting",
+          "/snippet",
+          "/emmet",
+          "/linting-error",
+          "/formatting",
+          "/intellisense",
+          "/debugging",
+          "/framework"
         ]
       },
-      '/FAQ',
-      '/CONTRIBUTING',
-      '/roadmap',
-      '/CHANGELOG',
-      '/credits'
+      "/FAQ",
+      "/CONTRIBUTING",
+      "/roadmap",
+      "/CHANGELOG",
+      "/credits"
     ]
   }
 };

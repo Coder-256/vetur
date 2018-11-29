@@ -1,39 +1,51 @@
-import { TextDocument, Position, Range } from 'vscode-languageserver-types';
+import { TextDocument, Position, Range } from "vscode-languageserver-types";
 import {
   getCSSLanguageService,
   getSCSSLanguageService,
   getLESSLanguageService,
   LanguageService
-} from 'vscode-css-languageservice';
-import * as _ from 'lodash';
-import * as emmet from 'vscode-emmet-helper';
+} from "vscode-css-languageservice";
+import * as _ from "lodash";
+import * as emmet from "vscode-emmet-helper";
 
-import { Priority } from './emmet';
-import { LanguageModelCache, getLanguageModelCache } from '../languageModelCache';
-import { LanguageMode } from '../languageModes';
-import { VueDocumentRegions } from '../embeddedSupport';
-import { getFileFsPath } from '../../utils/paths';
-import { prettierify } from '../../utils/prettier';
-import { ParserOption } from '../../utils/prettier/prettier.d';
-import { NULL_HOVER } from '../nullMode';
+import { Priority } from "./emmet";
+import {
+  LanguageModelCache,
+  getLanguageModelCache
+} from "../languageModelCache";
+import { LanguageMode } from "../languageModes";
+import { VueDocumentRegions } from "../embeddedSupport";
+import { getFileFsPath } from "../../utils/paths";
+import { prettierify } from "../../utils/prettier";
+import { ParserOption } from "../../utils/prettier/prettier.d";
+import { NULL_HOVER } from "../nullMode";
+import { VLSFormatConfig } from "../../config";
 
-export function getCSSMode(documentRegions: LanguageModelCache<VueDocumentRegions>): LanguageMode {
+export function getCSSMode(
+  documentRegions: LanguageModelCache<VueDocumentRegions>
+): LanguageMode {
   const languageService = getCSSLanguageService();
-  return getStyleMode('css', languageService, documentRegions);
+  return getStyleMode("css", languageService, documentRegions);
 }
 
-export function getPostCSSMode(documentRegions: LanguageModelCache<VueDocumentRegions>): LanguageMode {
+export function getPostCSSMode(
+  documentRegions: LanguageModelCache<VueDocumentRegions>
+): LanguageMode {
   const languageService = getCSSLanguageService();
-  return getStyleMode('postcss', languageService, documentRegions);
+  return getStyleMode("postcss", languageService, documentRegions);
 }
 
-export function getSCSSMode(documentRegions: LanguageModelCache<VueDocumentRegions>): LanguageMode {
+export function getSCSSMode(
+  documentRegions: LanguageModelCache<VueDocumentRegions>
+): LanguageMode {
   const languageService = getSCSSLanguageService();
-  return getStyleMode('scss', languageService, documentRegions);
+  return getStyleMode("scss", languageService, documentRegions);
 }
-export function getLESSMode(documentRegions: LanguageModelCache<VueDocumentRegions>): LanguageMode {
+export function getLESSMode(
+  documentRegions: LanguageModelCache<VueDocumentRegions>
+): LanguageMode {
   const languageService = getLESSLanguageService();
-  return getStyleMode('less', languageService, documentRegions);
+  return getStyleMode("less", languageService, documentRegions);
 }
 
 function getStyleMode(
@@ -44,7 +56,9 @@ function getStyleMode(
   const embeddedDocuments = getLanguageModelCache(10, 60, document =>
     documentRegions.get(document).getEmbeddedDocument(languageId)
   );
-  const stylesheets = getLanguageModelCache(10, 60, document => languageService.parseStylesheet(document));
+  const stylesheets = getLanguageModelCache(10, 60, document =>
+    languageService.parseStylesheet(document)
+  );
   let config: any = {};
 
   return {
@@ -56,17 +70,24 @@ function getStyleMode(
       config = c;
     },
     doValidation(document) {
-      if (languageId === 'postcss') {
+      if (languageId === "postcss") {
         return [];
       } else {
         const embedded = embeddedDocuments.get(document);
-        return languageService.doValidation(embedded, stylesheets.get(embedded));
+        return languageService.doValidation(
+          embedded,
+          stylesheets.get(embedded)
+        );
       }
     },
     doComplete(document, position) {
       const embedded = embeddedDocuments.get(document);
-      const emmetSyntax = languageId === 'postcss' ? 'css' : languageId;
-      const lsCompletions = languageService.doComplete(embedded, position, stylesheets.get(embedded));
+      const emmetSyntax = languageId === "postcss" ? "css" : languageId;
+      const lsCompletions = languageService.doComplete(
+        embedded,
+        position,
+        stylesheets.get(embedded)
+      );
       const lsItems = lsCompletions
         ? _.map(lsCompletions.items, i => {
             return {
@@ -76,7 +97,12 @@ function getStyleMode(
           })
         : [];
 
-      const emmetCompletions = emmet.doComplete(document, position, emmetSyntax, config.emmet);
+      const emmetCompletions = emmet.doComplete(
+        document,
+        position,
+        emmetSyntax,
+        config.emmet
+      );
       if (!emmetCompletions) {
         return { isIncomplete: false, items: lsItems };
       } else {
@@ -94,53 +120,81 @@ function getStyleMode(
     },
     doHover(document, position) {
       const embedded = embeddedDocuments.get(document);
-      return languageService.doHover(embedded, position, stylesheets.get(embedded)) || NULL_HOVER;
+      return (
+        languageService.doHover(
+          embedded,
+          position,
+          stylesheets.get(embedded)
+        ) || NULL_HOVER
+      );
     },
     findDocumentHighlight(document, position) {
       const embedded = embeddedDocuments.get(document);
-      return languageService.findDocumentHighlights(embedded, position, stylesheets.get(embedded));
+      return languageService.findDocumentHighlights(
+        embedded,
+        position,
+        stylesheets.get(embedded)
+      );
     },
     findDocumentSymbols(document) {
       const embedded = embeddedDocuments.get(document);
-      return languageService.findDocumentSymbols(embedded, stylesheets.get(embedded));
+      return languageService.findDocumentSymbols(
+        embedded,
+        stylesheets.get(embedded)
+      );
     },
     findDefinition(document, position) {
       const embedded = embeddedDocuments.get(document);
-      return languageService.findDefinition(embedded, position, stylesheets.get(embedded));
+      return languageService.findDefinition(
+        embedded,
+        position,
+        stylesheets.get(embedded)
+      );
     },
     findReferences(document, position) {
       const embedded = embeddedDocuments.get(document);
-      return languageService.findReferences(embedded, position, stylesheets.get(embedded));
+      return languageService.findReferences(
+        embedded,
+        position,
+        stylesheets.get(embedded)
+      );
     },
     findDocumentColors(document) {
       const embedded = embeddedDocuments.get(document);
-      return languageService.findDocumentColors(embedded, stylesheets.get(embedded));
+      return languageService.findDocumentColors(
+        embedded,
+        stylesheets.get(embedded)
+      );
     },
     getColorPresentations(document, color, range) {
       const embedded = embeddedDocuments.get(document);
-      return languageService.getColorPresentations(embedded, stylesheets.get(embedded), color, range);
+      return languageService.getColorPresentations(
+        embedded,
+        stylesheets.get(embedded),
+        color,
+        range
+      );
     },
     format(document, currRange, formattingOptions) {
-      if (config.vetur.format.defaultFormatter[languageId] === 'none') {
+      if (config.vetur.format.defaultFormatter[languageId] === "none") {
         return [];
       }
 
       const { value, range } = getValueAndRange(document, currRange);
       const needIndent = config.vetur.format.styleInitialIndent;
       const parserMap: { [k: string]: ParserOption } = {
-        css: 'css',
-        postcss: 'css',
-        scss: 'scss',
-        less: 'less'
+        css: "css",
+        postcss: "css",
+        scss: "scss",
+        less: "less"
       };
       return prettierify(
         value,
         getFileFsPath(document.uri),
         range,
-        needIndent,
-        formattingOptions,
-        config.prettier,
-        parserMap[languageId]
+        config.vetur.format as VLSFormatConfig,
+        parserMap[languageId],
+        needIndent
       );
     },
     onDocumentRemoved(document) {
@@ -154,7 +208,10 @@ function getStyleMode(
   };
 }
 
-function getValueAndRange(document: TextDocument, currRange: Range): { value: string; range: Range } {
+function getValueAndRange(
+  document: TextDocument,
+  currRange: Range
+): { value: string; range: Range } {
   let value = document.getText();
   let range = currRange;
 
@@ -163,7 +220,10 @@ function getValueAndRange(document: TextDocument, currRange: Range): { value: st
     const endOffset = document.offsetAt(currRange.end);
     value = value.substring(startOffset, endOffset);
   } else {
-    range = Range.create(Position.create(0, 0), document.positionAt(value.length));
+    range = Range.create(
+      Position.create(0, 0),
+      document.positionAt(value.length)
+    );
   }
   return { value, range };
 }
