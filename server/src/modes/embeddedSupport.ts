@@ -69,7 +69,7 @@ export function getDocumentRegions(document: TextDocument): VueDocumentRegions {
         });
         languageIdFromType = "";
         break;
-      case TokenType.StartTag:
+      case TokenType.StartTag: {
         const tagName = scanner.getTokenText();
         if (tagName === "template") {
           const templateRegion = scanTemplateRegion(scanner, text);
@@ -80,6 +80,7 @@ export function getDocumentRegions(document: TextDocument): VueDocumentRegions {
         lastTagName = tagName;
         lastAttributeName = "";
         break;
+      }
       case TokenType.AttributeName:
         lastAttributeName = scanner.getTokenText();
         break;

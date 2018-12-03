@@ -309,10 +309,11 @@ export function doComplete(
       case TokenType.Whitespace:
         if (offset <= scanner.getTokenEnd()) {
           switch (scanner.getScannerState()) {
-            case ScannerState.AfterOpeningStartTag:
+            case ScannerState.AfterOpeningStartTag: {
               const startPos = scanner.getTokenOffset();
               const endTagPos = scanNextForEndPos(TokenType.StartTag);
               return collectTagSuggestions(startPos, endTagPos);
+            }
             case ScannerState.WithinTag:
             case ScannerState.AfterAttributeName:
               return collectAttributeNameSuggestions(scanner.getTokenEnd());

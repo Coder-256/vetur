@@ -16,7 +16,6 @@ export class HoverAsserter {
         contents.length === 0,
         "expect nothing, but get hover: " + contents
       );
-    } else {
     }
   }
   hasHoverAt(label: string, offset: number) {

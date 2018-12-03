@@ -16,8 +16,8 @@ function getWorkspaceUrl(
   base: string
 ): string | null {
   if (
-    /^\s*javascript\:/i.test(tokenContent) ||
-    /^\s*\#/i.test(tokenContent) ||
+    /^\s*javascript:/i.test(tokenContent) ||
+    /^\s*#/i.test(tokenContent) ||
     /[\n\r]/.test(tokenContent)
   ) {
     return null;
@@ -106,10 +106,11 @@ export function findDocumentLinks(
           afterBase = tagName === "base";
         }
         break;
-      case TokenType.AttributeName:
+      case TokenType.AttributeName: {
         const attributeName = scanner.getTokenText().toLowerCase();
         afterHrefOrSrc = attributeName === "src" || attributeName === "href";
         break;
+      }
       case TokenType.AttributeValue:
         if (afterHrefOrSrc) {
           const attributeValue = scanner.getTokenText();

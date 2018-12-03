@@ -87,11 +87,12 @@ export function parse(text: string): HTMLDocument {
   let attributes: { [k: string]: string } | undefined = {};
   while (token !== TokenType.EOS) {
     switch (token) {
-      case TokenType.StartTagOpen:
+      case TokenType.StartTagOpen: {
         const child = new Node(scanner.getTokenOffset(), text.length, [], curr);
         curr.children.push(child);
         curr = child;
         break;
+      }
       case TokenType.StartTag:
         curr.tag = scanner.getTokenText();
         break;
@@ -105,7 +106,7 @@ export function parse(text: string): HTMLDocument {
       case TokenType.EndTagOpen:
         endTagStart = scanner.getTokenOffset();
         break;
-      case TokenType.EndTag:
+      case TokenType.EndTag: {
         const closeTag = scanner.getTokenText().toLowerCase();
         while (!curr.isSameTag(closeTag) && curr !== htmlDocument) {
           curr.end = endTagStart;
@@ -117,6 +118,7 @@ export function parse(text: string): HTMLDocument {
           curr.endTagStart = endTagStart;
         }
         break;
+      }
       case TokenType.StartTagSelfClose:
         if (curr !== htmlDocument) {
           curr.closed = true;
@@ -150,13 +152,14 @@ export function parse(text: string): HTMLDocument {
         }
         attributes[pendingAttribute] = ""; // Support valueless attributes such as 'checked'
         break;
-      case TokenType.AttributeValue:
+      case TokenType.AttributeValue: {
         const value = scanner.getTokenText();
         if (attributes && pendingAttribute) {
           attributes[pendingAttribute] = value;
           pendingAttribute = "";
         }
         break;
+      }
     }
     token = scanner.scan();
   }

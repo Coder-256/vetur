@@ -140,7 +140,7 @@ class MultiLineStream {
         ;
         i < ch.length && this.source.charCodeAt(this.position + i) === ch[i];
         i++
-      ) {}
+      );
       if (i === ch.length) {
         return true;
       }
@@ -238,9 +238,7 @@ export function createScanner(
   }
 
   function nextAttributeName(): string {
-    return stream
-      .advanceIfRegExp(/^[^\s"'<>/=\x00-\x0F\x7F\x80-\x9F]*/)
-      .toLowerCase();
+    return stream.advanceIfRegExp(/^[^\s"'<>/=\x7F\x80-\x9F]*/).toLowerCase();
   }
 
   function finishToken(
@@ -332,7 +330,7 @@ export function createScanner(
         }
         stream.advanceUntilChars([_RCR, _RCR]);
         return finishToken(offset, TokenType.InterpolationContent);
-      case ScannerState.AfterOpeningEndTag:
+      case ScannerState.AfterOpeningEndTag: {
         const tagName = nextElementName();
         if (tagName.length > 0) {
           state = ScannerState.WithinEndTag;
@@ -356,6 +354,7 @@ export function createScanner(
           );
         }
         return internalScan();
+      }
       case ScannerState.WithinEndTag:
         if (stream.skipWhitespace()) {
           // white space is valid here
@@ -447,11 +446,11 @@ export function createScanner(
         }
         state = ScannerState.WithinTag;
         return internalScan(); // no advance yet - jump to WithinTag
-      case ScannerState.BeforeAttributeValue:
+      case ScannerState.BeforeAttributeValue: {
         if (stream.skipWhitespace()) {
           return finishToken(offset, TokenType.Whitespace);
         }
-        const attributeValue = stream.advanceIfRegExp(/^[^\s"'`=<>\/]+/);
+        const attributeValue = stream.advanceIfRegExp(/^[^\s"'`=<>/]+/);
         if (attributeValue.length > 0) {
           if (lastAttributeName === "type") {
             lastTypeValue = attributeValue;
@@ -478,7 +477,8 @@ export function createScanner(
         state = ScannerState.WithinTag;
         hasSpaceAfterTag = false;
         return internalScan(); // no advance yet - jump to WithinTag
-      case ScannerState.WithinScriptContent:
+      }
+      case ScannerState.WithinScriptContent: {
         // see http://stackoverflow.com/questions/14574471/how-do-browsers-parse-a-script-tag-exactly
         let sciptState = 1;
         while (!stream.eos()) {
@@ -512,6 +512,7 @@ export function createScanner(
           return finishToken(offset, TokenType.Script);
         }
         return internalScan(); // no advance yet - jump to content
+      }
       case ScannerState.WithinStyleContent:
         stream.advanceUntilRegExp(/<\/style/i);
         state = ScannerState.WithinContent;

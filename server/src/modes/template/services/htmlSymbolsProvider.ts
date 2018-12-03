@@ -60,12 +60,12 @@ function nodeToName(node: Node): string {
     const classes = node.attributes["class"];
 
     if (id) {
-      name += `#${id.replace(/[\"\']/g, "")}`;
+      name += `#${id.replace(/["']/g, "")}`;
     }
 
     if (classes) {
       name += classes
-        .replace(/[\"\']/g, "")
+        .replace(/["']/g, "")
         .split(/\s+/)
         .map(className => `.${className}`)
         .join("");

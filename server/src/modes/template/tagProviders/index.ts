@@ -102,7 +102,9 @@ export function getTagProviderSettings(
       allTagProviders.push(tagProvider);
       settings[dep] = true;
     }
-  } catch (e) {}
+  } catch (e) {
+    // Ignore any errors
+  }
   return settings;
 }
 

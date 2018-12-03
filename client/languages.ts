@@ -21,7 +21,7 @@ const EMPTY_ELEMENTS: string[] = [
 
 export function registerLanguageConfigurations() {
   languages.setLanguageConfiguration("vue-html", {
-    wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\$\^\&\*\(\)\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\s]+)/g,
+    wordPattern: /(-?\d*\.\d\w*)|([^`~!@$^&*()=+[{\]}\\|;:'",.<>/\s]+)/g,
     onEnterRules: [
       {
         beforeText: new RegExp(
