@@ -11,10 +11,11 @@
     "watch": "run-p watch-client watch-server",
     "watch-client": "tsc -w -p .",
     "watch-server": "tsc -w -p server",
-    "lint": "sh ./build/lint-all.sh",
+    "lint": "sh ./build/lint-all.sh fix",
+    "lint-check": "sh ./build/lint-all.sh verify",
     "test:server": "cd server && npm run compile && npm test",
     "test:e2e": "sh ./test/e2e.sh",
-    "test": "run-s lint compile test:server test:e2e",
+    "test": "run-s lint-check compile test:server test:e2e",
     "docs": "sh ./build/update-docs.sh",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
@@ -27,7 +28,7 @@
   "lint-staged": {
     "linters": {
       "*": [
-        "sh ./build/lint.sh",
+        "sh ./build/lint.sh fix",
         "git add"
       ]
     },
@@ -378,6 +379,7 @@
     "@types/prettier": "^1.15.2",
     "eslint": "^5.9.0",
     "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-mocha": "^5.2.0",
     "eslint-plugin-typescript": "^0.14.0",
     "eslint-plugin-vue": "^5.0.0-beta.5",
     "husky": "^1.2.0",
