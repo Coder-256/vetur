@@ -3,7 +3,7 @@ steps:
     displayName: "Use Node 8.x"
     inputs:
       versionSpec: 8.x
-  - script: "npm ci && cd server && npm ci && ci .."
+  - script: "npm ci && cd server && npm ci && cd .."
     displayName: "Install dependencies"
   - task: Npm@1
     displayName: "Check Lint"
