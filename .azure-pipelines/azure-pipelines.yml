@@ -1,0 +1,27 @@
+jobs:
+  - job: Windows
+    pool:
+      vmImage: "vs2017-win2016"
+    steps:
+      - template: templates/base.yml
+      - template: templates/e2e.yml
+  - job: macOS
+    pool:
+      vmImage: "macOS-10.13"
+    steps:
+      - template: templates/base.yml
+      - template: templates/e2e.yml
+  - job: Linux
+    pool:
+      vmImage: "ubuntu-16.04"
+    steps:
+      - template: templates/base.yml
+      - script: |
+          set -e
+          /usr/bin/Xvfb :10 -ac >> /tmp/Xvfb.out 2>&1 &
+          disown -ar
+        displayName: "Start xvfb"
+      - template: templates/e2e.yml
+        parameters:
+          env:
+            DISPLAY: :10

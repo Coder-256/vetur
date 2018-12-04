@@ -1,0 +1,9 @@
+steps:
+  - task: Npm@1
+    displayName: "Test E2E"
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: "run test:e2e"
+    env:
+      ${{ insert }}: ${{ parameters.env }}
