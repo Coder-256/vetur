@@ -54,7 +54,7 @@ async function lintESLint(file: File) {
     }
   } else if (report.errorCount == 0) return;
 
-  formatter = formatter || cli.getFormatter("");
+  formatter = formatter || cli.getFormatter();
   console.error(formatter(report.results));
   throw new Error(
     `ESLint failed with ${unfixable} unfixable error${
