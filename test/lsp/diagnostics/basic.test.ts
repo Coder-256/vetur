@@ -51,7 +51,7 @@ describe("Should find common diagnostics for all regions", () => {
         severity: vscode.DiagnosticSeverity.Error,
         // tslint:disable-next-line
         message:
-          "Argument of type '{ components: { Ite: any; }; data(this: CombinedVueInstance<Vue, {}, {}, {}, Readonly<Record<neve...' is not assignable to parameter of type 'ComponentOptions<Vue, DefaultData<Vue>, DefaultMethods<Vue>, DefaultComputed, PropsDefinition<Rec...'.\n  Object literal may only specify known properties, and 'compute' does not exist in type 'ComponentOptions<Vue, DefaultData<Vue>, DefaultMethods<Vue>, DefaultComputed, PropsDefinition<Rec...'."
+          "Argument of type '{ components: { Ite: any; }; data(this: CombinedVueInstance<Vue, {}, {}, {}, Readonly<Record<never, any>>>): { ms: string; }; compute: { count(): any; }; methods: { hello(): void; }; }' is not assignable to parameter of type 'ComponentOptions<Vue, DefaultData<Vue>, DefaultMethods<Vue>, DefaultComputed, PropsDefinition<Record<string, any>>, Record<string, any>>'.\n  Object literal may only specify known properties, but 'compute' does not exist in type 'ComponentOptions<Vue, DefaultData<Vue>, DefaultMethods<Vue>, DefaultComputed, PropsDefinition<Record<string, any>>, Record<string, any>>'. Did you mean to write 'computed'?"
       },
       {
         range: sameLineRange(24, 14, 16),
