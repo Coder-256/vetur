@@ -7,7 +7,7 @@ CODE_ROOT=$(pwd)
 
 if [ ! -d "$(pwd)/test/fixture/node_modules" ]; then
   cd $CODE_TESTS_WORKSPACE
-  npm i
+  npm ci
   cd $CODE_ROOT
 fi
 
