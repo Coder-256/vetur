@@ -30,10 +30,10 @@ The language client launches Vue Language Server on port 6005 whenever a Vue fil
 To compile:
 
 ```bash
-yarn
-cd server && yarn && cd ..
-yarn compile or
-yarn watch
+npm i
+cd server && npm i && cd ..
+npm run compile or
+npm run watch
 ```
 
 To debug:

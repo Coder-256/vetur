@@ -1,10 +1,10 @@
 # Deps
-yarn
-cd server && yarn && cd ..
+npm i
+cd server && npm i && cd ..
 
 # Compile / Test
-yarn compile
-yarn test:server
+npm run compile
+npm run test:server
 
 # Remove server devDependencies
-cd server && yarn --prod && cd ..
+cd server && npm i --production && cd ..

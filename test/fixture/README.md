@@ -5,8 +5,8 @@ Project based on [vuepack](https://github.com/egoist/vuepack) to try [Vetur](htt
 ## Usage
 
 ```bash
-$ yarn
-$ yarn dev
+$ npm i
+$ npm run dev
 ```
 
 ## Things to Try

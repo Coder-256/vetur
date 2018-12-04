@@ -42,7 +42,7 @@ To turn it off, set `vetur.validation.template: false`.
 To configure linting rules:
 
 - Turn off Vetur's template validation with `vetur.validation.template: false`
-- `yarn add -D eslint eslint-plugin-vue`
+- `npm i -D eslint eslint-plugin-vue`
 - Set ESLint rules in `.eslintrc`. An example:
 
   ```json

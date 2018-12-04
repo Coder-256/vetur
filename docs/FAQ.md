@@ -19,7 +19,7 @@ This is probably caused by VS Code not installing Vetur properly. Try these meth
 
 ## Vetur Crash
 
-- If it says `cannot find module <some-module>`, go to Vetur's client code installation directory and run `yarn` or `npm install`.
+- If it says `cannot find module <some-module>`, go to Vetur's client code installation directory and run `npm install`.
   This is usually caused by VS Code not correctly updating Vetur's dependencies from version to version.
   Paths:
 
@@ -86,9 +86,9 @@ Then, clone the repository and compile it.
 ```
 git clone https://github.com/vuejs/vetur
 cd vetur
-yarn
-cd server && yarn && yarn compile
-cd ../ && yarn compile
+npm i
+cd server && npm i && npm run compile
+cd ../ && npm run compile
 vsce package
 ```
 

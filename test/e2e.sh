@@ -7,7 +7,7 @@ CODE_ROOT=$(pwd)
 
 if [ ! -d "$(pwd)/test/fixture/node_modules" ]; then
   cd $CODE_TESTS_WORKSPACE
-  yarn install
+  npm i
   cd $CODE_ROOT
 fi
 
