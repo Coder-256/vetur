@@ -5,27 +5,16 @@ steps:
       versionSpec: 8.x
   - task: Npm@1
     displayName: "Install root dependencies"
-    inputs:
-      workingDir: "server"
   - task: Npm@1
     displayName: "Install server dependencies"
-  - task: Npm@1
-    displayName: "Check Lint"
     inputs:
-      command: custom
-      verbose: false
-      customCommand: "run lint-check"
+      workingDir: "server"
+  # https://docs.microsoft.com/en-us/azure/devops/pipelines/languages/javascript?view=vsts&tabs=yaml#run-unit-tests
+  - script: npm run lint-check
+    displayName: "Check Lint"
     env:
       CI: true
-  - task: Npm@1
+  - script: npm run compile
     displayName: "Compile"
-    inputs:
-      command: custom
-      verbose: false
-      customCommand: "run compile"
-  - task: Npm@1
+  - script: npm run test:server
     displayName: "Test Server"
-    inputs:
-      command: custom
-      verbose: false
-      customCommand: "run test:server"
