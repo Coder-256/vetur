@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-[ -z "$CI" ] || env
-
 # List all unignored files.
-{ git ls-files -z --cached --others --exclude-standard || exit $?; } |
-{ grep -v --null 'fixture' || exit $?; } |
-# Clean environment for Windows pipeline
-{ xargs "$(dirname "$0")/lint.sh" "$@" || exit $?; }
+{ git ls-files --cached --others --exclude-standard || exit $?; } |
+{ grep -v 'fixture' || exit $?; } |
+{ npx ts-node -- "$(dirname "$0")/lint.ts" --stdin "$@" || exit $?; }

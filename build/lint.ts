@@ -1,6 +1,13 @@
 import * as prettier from "prettier";
 import * as eslint from "eslint";
 import * as fs from "fs";
+import * as readline from "readline";
+
+const linters: ((file: File) => Promise<void>)[] = [lintESLint, lintPrettier];
+let failedFiles: string[] = [];
+let cli: eslint.CLIEngine | undefined;
+let formatter: eslint.CLIEngine.Formatter | undefined;
+let waiting = 0;
 
 class File {
   constructor(readonly path: string) {}
@@ -34,8 +41,6 @@ class File {
   }
 }
 
-let cli: eslint.CLIEngine | undefined;
-let formatter: eslint.CLIEngine.Formatter | undefined;
 async function lintESLint(file: File) {
   if (!/\.((t|j)sx?|vue)$/.test(file.path)) return;
   cli = cli || new eslint.CLIEngine({ fix: true });
@@ -79,7 +84,6 @@ async function lintPrettier(file: File) {
   }
 }
 
-const linters: ((file: File) => Promise<void>)[] = [lintESLint, lintPrettier];
 async function runLinters(path: string) {
   const file = new File(path);
   try {
@@ -96,29 +100,42 @@ async function runLinters(path: string) {
 // | Main |
 // |------|
 //
-
-const fix = (() => {
-  switch (process.argv[2]) {
+const { fix, useInput } = (() => {
+  let fix: boolean | undefined;
+  let useInput = process.argv[2] === "--stdin";
+  switch (useInput ? process.argv[3] : process.argv[2]) {
     case "verify":
-      return false;
+      fix = false;
+      break;
     case "fix":
-      return true;
+      fix = true;
+      break;
   }
+  if (fix !== undefined) return { fix, useInput };
   console.error("Usage:");
-  console.error("lint.sh [verify|fix] file ...");
+  console.error("lint.sh [--stdin] [verify|fix] file ...");
   return process.exit(1);
 })();
 
-let failedFiles: string[] = [];
-
-const promises = process.argv.slice(3).map(path => runLinters(path));
-
-Promise.all(promises).then(() => {
+function outputReport() {
   if (failedFiles.length > 0) {
     console.error("ERROR: The following files failed to lint:");
     for (const file of failedFiles) console.error(file);
     return process.exit(1);
   } else {
+    console.log("All files linted successfully.");
     return process.exit(0);
   }
-});
+}
+
+async function awaitLinters(path: string) {
+  ++waiting;
+  await runLinters(path);
+  if (--waiting <= 0) outputReport();
+}
+
+if (useInput) {
+  readline.createInterface({ input: process.stdin }).on("line", awaitLinters);
+} else {
+  process.argv.slice(3).forEach(awaitLinters);
+}
