@@ -12,6 +12,8 @@ steps:
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/languages/javascript?view=vsts&tabs=yaml#run-unit-tests
   - script: npm run lint-check
     displayName: "Check Lint"
+    env:
+      CI: true
   - script: npm run compile
     displayName: "Compile"
   - script: npm run test:server

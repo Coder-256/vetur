@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+[ -z "$CI" ] || env
+
 # List all unignored files.
 { git ls-files -z --cached --others --exclude-standard || exit $?; } |
 { grep -v --null 'fixture' || exit $?; } |
