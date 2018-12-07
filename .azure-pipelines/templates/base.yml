@@ -3,12 +3,10 @@ steps:
     displayName: "Use Node 8.x"
     inputs:
       versionSpec: 8.x
-  - task: Npm@1
+  - script: npm ci
     displayName: "Install root dependencies"
-  - task: Npm@1
+  - script: cd server && npm ci && cd ..
     displayName: "Install server dependencies"
-    inputs:
-      workingDir: "server"
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/languages/javascript?view=vsts&tabs=yaml#run-unit-tests
   - script: npm run lint-check
     displayName: "Check Lint"
