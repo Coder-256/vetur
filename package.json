@@ -11,12 +11,12 @@
     "watch": "run-p watch-client watch-server",
     "watch-client": "tsc -w -p .",
     "watch-server": "tsc -w -p server",
-    "lint": "./build/lint-all.sh fix",
-    "lint-check": "./build/lint-all.sh verify",
+    "lint": "sh ./build/lint-all.sh fix",
+    "lint-check": "sh ./build/lint-all.sh verify",
     "test:server": "cd server && npm run compile && npm test",
-    "test:e2e": "./test/e2e.sh",
+    "test:e2e": "sh ./test/e2e.sh",
     "test": "run-s lint-check compile test:server test:e2e",
-    "docs": "./build/update-docs.sh",
+    "docs": "sh ./build/update-docs.sh",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "husky": {
@@ -28,7 +28,7 @@
   "lint-staged": {
     "linters": {
       "*": [
-        "./build/lint.sh fix",
+        "sh ./build/lint.sh fix",
         "git add"
       ]
     },

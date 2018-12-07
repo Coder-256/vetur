@@ -1,10 +1,6 @@
 steps:
-  - task: Npm@1
+  - script: npm run test:e2e
     displayName: "Test E2E"
-    inputs:
-      command: custom
-      verbose: false
-      customCommand: "run test:e2e"
     ${{ if parameters.env }}:
       env:
         ${{ insert }}: ${{ parameters.env }}
