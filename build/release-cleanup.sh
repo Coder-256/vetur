@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Deps
 npm i
 cd server && npm i && cd ..

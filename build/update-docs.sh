@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Prepare
 cd docs
 rm -rf .vuepress/dist
